@@ -17,11 +17,11 @@ class CreateAttendanceSessionTable extends Migration
         if (!Schema::hasTable('attendance_session')) {
             Schema::create('attendance_session', function (Blueprint $table) {
                 $table->id();
-                $table->integer('user_id');
+                $table->integer('phone')->nullable();
                 $table->date('date');
-                $table->decimal('amount');
-                $table->string('bill_code');
-                $table->tinyInteger('status');
+                $table->decimal('amount')->nullable();
+                $table->string('bill_code')->nullable();
+                $table->tinyInteger('status')->default(1);
                 $table->timestamps();
             });
         }

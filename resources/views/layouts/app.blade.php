@@ -11,6 +11,7 @@
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ $GetSetting->description }}">
     <meta property="og:description" content="{{ $GetSetting->description }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <link rel="shortcut icon" href="{{ asset('image/favicon.png') }}">
     <link rel="stylesheet" href="{{ asset('css/bootstrap.min.css') }}">
     <link rel="stylesheet" href="{{ asset('css/style.css') }}">

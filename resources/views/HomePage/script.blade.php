@@ -1,55 +1,61 @@
 <script type="text/javascript">
     $(document).ready(function () {
-        console.log(123)
+        $.ajaxSetup({
+            headers: {
+                'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+            }
+        });
         setTimeSessionAttendance();
     });
+
     function socket() {
         $.ajax({
-            url: '/game.json?' + Date.now(), success: function (data) {
-                onMessage(data)
-                setTimeout(function () {
-                    socket()
-                }, 1000);
+            url: '{{ route('home.attendance.realtime') }}',
+            type: 'post',
+            success: function (data) {
+                let result = JSON.parse(data);
+                $('.diemdanh_users').html(result.count_users_attendance);
+                $('#diemdanh_last').html(result.phone_win_latest);
+                $('#diemdanh_id').html(result.session_current_code);
             }, error: function (data) {
-                setTimeout(function () {
-                    socket()
-                }, 1000);
             }
         })
     }
 
-    let old = 0;
-    let timenew = 0;
-    let timelast = 0;
+    let timelast = Number('{{ $secondRealTime }}');
+
     function setTimeSessionAttendance() {
-    setInterval(function () {
-        console.log(123)
-        timelast--;
-        let checktime = Math.abs(timelast - timenew);
-        if (checktime > 10) {
-            timelast = timenew;
-        }
-        if (timelast < 0) timelast = 0;
-        $("#diemdanh_thoigian").html(timelast);
-        $("#thoigian_head").html(timelast);
-    }, 1000);
+        setInterval(function () {
+            timelast--;
+            $("#diemdanh_thoigian").html(timelast);
+            $("#thoigian_head").html(timelast);
+            socket();
+        }, 1000);
     }
+
     function diemdanh() {
         if ($("#phonevalue").val().length <= 9) {
             alert(`Khong hop le`);
             return false;
         }
-        let num1 = getRndInteger(1, 9);
-        let num2 = getRndInteger(1, 9);
-        let person = prompt("XÃ¡c minh báº¡n lÃ  há»c sinh giá»i toÃ¡n " + num1 + "+" + num2 + "= ?:", "");
+        let num1 = Number('{{ random_int(1,9) }}');
+        let num2 = Number('{{ random_int(1,9) }}');
+        let person = prompt("Mã xác minh " + num1 + "+" + num2 + "= ?:", "");
         if (person == null || person != (num1 + num2)) {
-            alert(` Báº¡n Ä‘Ã£ nháº­p sai phÃ©p tÃ­nh, vui lÃ²ng thá»­ láº¡i`);
+            alert(`Bạn đã nhập sai phép tính. Vui lòng thử lại`);
             return false;
         }
         $.ajax({
-            url: '/diemdanh.json', data: {phone: $("#phonevalue").val(), captcha: person}, type: 'POST', success: function (d) {
-                alert(d);
-                $("#phonevalue").val(``)
+            url: '{{ route('home.attendance_session') }}',
+            data: {phone: $("#phonevalue").val(), captcha: person},
+            type: 'POST',
+            success: function (data) {
+                if (data.status == 2) {
+                    alert(data.message);
+                } else {
+                    alert("Điểm danh thành công!");
+                    $("#phonevalue").val(``)
+                }
             }
         })
     }
