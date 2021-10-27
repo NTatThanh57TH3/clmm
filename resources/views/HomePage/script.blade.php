@@ -26,7 +26,10 @@
 
     function setTimeSessionAttendance() {
         setInterval(function () {
-            timelast--;
+            if (timelast > 0) {
+                timelast--;
+            }
+
             $("#diemdanh_thoigian").html(timelast);
             $("#thoigian_head").html(timelast);
             socket();

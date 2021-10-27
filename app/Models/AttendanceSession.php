@@ -17,7 +17,6 @@ class AttendanceSession extends Model
         'amount',
         'bill_code',
         'status',
-        'status',
     ];
 
     public function getPhone()

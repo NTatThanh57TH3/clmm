@@ -49,7 +49,7 @@
                 - Số điện thoại điểm danh phải chơi Clmm.Me ít nhất 1 lần trong ngày. Không giới hạn số
                 lần điểm danh trong ngày. <br>
                 - Khi hết thời gian, người may mắn sẽ nhận được số tiền của phiên đó. <br>
-                - Game chỉ hoạt động từ <b>7h sáng</b> đến 1h đêm
+                - Game chỉ hoạt động từ <b>7h sáng</b> đến 11h tối
             </div>
 
             <div class="occho" id="muc_lichsu" style="display:none;">

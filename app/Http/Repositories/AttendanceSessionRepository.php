@@ -22,7 +22,7 @@ class AttendanceSessionRepository extends Repository
     {
         $now       = Carbon::now();
         $hour      = $now->hour;
-        $minute    = (int)floor($now->minute / 10) * 10;
+        $minute    = (int)floor($now->minute);
         $timeStart = Carbon::parse($hour.":".$minute);
 
         return TIME_EACH_ATTENDANCE_SESSION - (int)($now->timestamp - $timeStart->timestamp);
@@ -52,11 +52,17 @@ class AttendanceSessionRepository extends Repository
         ];
     }
 
+    public function getCurrentAttendanceSession()
+    {
+        return $this->getDataAttendanceSession()['current'];
+    }
+
     public function getUsersAttendanceSession($attendanceSessionCurrent = null)
     {
         $attendanceSessionCurrent = !is_null($attendanceSessionCurrent) ? $attendanceSessionCurrent : $this->getDataAttendanceSession()['current'];
-        return count($attendanceSessionCurrent->usersAttendanceSession);
+        return $attendanceSessionCurrent->usersAttendanceSession;
     }
+
 
     public function insertUsersAttendanceSession($data)
     {
@@ -71,6 +77,12 @@ class AttendanceSessionRepository extends Repository
     {
         $attendanceSessionCurrent = $this->getDataAttendanceSession()['current'];
         return UserAttendanceSession::where('phone', $phone)->where('session_id', $attendanceSessionCurrent->id)->get();
+    }
+
+    public function createNewAttendanceSession($currentAttendanceSession)
+    {
+        $currentAttendanceSession->update(['status' => STATUS_DE_ACTIVE]);
+        return AttendanceSession::create(['date' => Carbon::today()->toDateString()]);
     }
 
 }
