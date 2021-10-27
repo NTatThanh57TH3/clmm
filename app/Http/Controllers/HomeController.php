@@ -270,7 +270,8 @@ class HomeController extends Controller
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
         $secondRealTime           = $this->attendanceSessionRepository->getSecondsRealtime();
-        $countUsersAttendance     = count($this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent));
+        $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
+        $countUsersAttendance     = count($usersAttendance);
         //View
         return view(
             'HomePage.home',
@@ -292,6 +293,7 @@ class HomeController extends Controller
                 'listSessionsPast',
                 'countUsersAttendance',
                 'phoneWinLatest',
+                'usersAttendance',
             )
         );
     }
