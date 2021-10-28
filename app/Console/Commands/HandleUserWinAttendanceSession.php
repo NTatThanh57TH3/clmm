@@ -48,10 +48,8 @@ class HandleUserWinAttendanceSession extends Command
      */
     public function handle()
     {
-        Log::info(1);
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        $secondRealTime = $this->attendanceSessionRepository->getSecondsRealtime();
-        Log::info($secondRealTime);
+//        $secondRealTime = $this->attendanceSessionRepository->getSecondsRealtime();
         $startTime = Carbon::parse(TIME_START_ATTENDANCE);
         $endTime   = Carbon::parse(TIME_END_ATTENDANCE);
         $now       = Carbon::now();
@@ -78,7 +76,7 @@ class HandleUserWinAttendanceSession extends Command
             $phoneWin                  = $phoneUsersAttendance[random_int(0, $countPhoneUsersAttendance)] ?? null;
             $currentAttendanceSession->update([
                 'phone'     => $phoneWin,
-                'amount'    => random_int(5000, 100000),
+                'amount'    => random_int(MONEY_MIN_WIN_ATTENDANCE, MONEY_MAX_WIN_ATTENDANCE),
                 'bill_code' => 'ATTSS-'.bin2hex(random_bytes(3)).'-ME',
             ]);
         }
