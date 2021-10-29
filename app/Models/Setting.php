@@ -28,6 +28,7 @@ class Setting extends Model
         'on_tong3so',
         'on_1phan3',
         'on_nohu',
-        'on_trathuongtuan'
+        'on_trathuongtuan',
+        'on_diemdanh'
     ];
 }

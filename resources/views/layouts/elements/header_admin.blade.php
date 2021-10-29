@@ -135,6 +135,7 @@
                     <li><a href="{{ route('admin_setting_tong3so') }}"><i class="fa fa-circle-o"></i> Trò chơi tổng 3 số</a></li>
                     <li><a href="{{ route('admin_setting_1phan3') }}"><i class="fa fa-circle-o"></i> Trò chơi 1 phần 3</a></li>
                     <li><a href="{{ route('admin_setting_nohu') }}"><i class="fa fa-circle-o"></i> Trò chơi nổ hũ</a></li>
+                    <li><a href="{{ route('admin_setting_diemdanh') }}"><i class="fa fa-circle-o"></i> Điểm danh nhận quà</a></li>
                 </ul>
             </li>
 

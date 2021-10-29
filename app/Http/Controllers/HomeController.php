@@ -271,6 +271,7 @@ class HomeController extends Controller
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
         $secondRealTime           = $this->attendanceSessionRepository->getSecondsRealtime();
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
+        $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
         $countUsersAttendance     = count($usersAttendance);
         $startTime                = Carbon::parse(TIME_START_ATTENDANCE);
         $endTime                  = Carbon::parse(TIME_END_ATTENDANCE);
@@ -301,6 +302,7 @@ class HomeController extends Controller
                 'usersAttendance',
                 'listUserAttendance',
                 'canAttendance',
+                'totalAmount',
             )
         );
     }
@@ -310,18 +312,20 @@ class HomeController extends Controller
         $dataAttendanceSession    = $this->attendanceSessionRepository->getDataAttendanceSession();
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
-        $countUsersAttendance     = count($this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent));
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
-        $usersAttendance          = $usersAttendance->transform(function ($user) {
+        $countUsersAttendance     = count($usersAttendance);
+        $usersAttendance          = $usersAttendance->transform(function($user) {
             $user->phone = $user->getPhone();
             return $user;
         });
         $phonesAttendance         = implode(",", $usersAttendance->pluck('phone')->toArray());
+        $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
         return json_encode([
             'session_current_code'   => $attendanceSessionCurrent->id,
             'phone_win_latest'       => $phoneWinLatest,
             'count_users_attendance' => $countUsersAttendance,
             'phones_attendance'      => $phonesAttendance,
+            'total_amount'           => $totalAmount,
         ], true);
     }
 

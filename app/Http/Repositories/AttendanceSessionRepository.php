@@ -10,6 +10,8 @@ use App\Models\AttendanceSession;
 use App\Models\UserAttendanceSession;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
+use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 
 class AttendanceSessionRepository extends Repository
 {
@@ -39,7 +41,7 @@ class AttendanceSessionRepository extends Repository
                 'current'          => AttendanceSession::create([
                     'date' => Carbon::today()->toDateString(),
                 ]),
-                'phone_win_latest' => "",
+                'phone_win_latest' => "*",
                 'sessions_past'    => collect(),
             ];
         }
@@ -47,7 +49,7 @@ class AttendanceSessionRepository extends Repository
         $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
         return [
             'current'          => $current,
-            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "",
+            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "*",
             'sessions_past'    => count($sessionsPast) > 0 ? $sessionsPast : collect(),
         ];
     }
@@ -55,6 +57,11 @@ class AttendanceSessionRepository extends Repository
     public function getCurrentAttendanceSession()
     {
         return $this->getDataAttendanceSession()['current'];
+    }
+
+    public function getTotalAmountAttendanceSession()
+    {
+        return DB::table('attendance_session')->sum('amount');
     }
 
     public function getUsersAttendanceSession($attendanceSessionCurrent = null)
@@ -83,6 +90,18 @@ class AttendanceSessionRepository extends Repository
     {
         $currentAttendanceSession->update(['status' => STATUS_DE_ACTIVE]);
         return AttendanceSession::create(['date' => Carbon::today()->toDateString()]);
+    }
+
+    public function getPhoneAttendanceSessionBots()
+    {
+        $cache = Cache::get('cache_phone_attendance_session_bots');
+        if (!is_null($cache)) {
+            return $cache;
+        }
+        $phones = collect(DB::table('attendance_session_bots')->select('phone')->get());
+        $phones = $phones->pluck('phone')->toArray();
+        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
+        return $phones;
     }
 
 }

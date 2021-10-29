@@ -18,7 +18,7 @@
                             color="660000"><b id="diemdanh_thoigian">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b> giây</font></small><br>
                 <small><i class="fa fa-star" aria-hidden="true"></i> Thắng phiên trước: <font
                             color="333300"><b id="diemdanh_last">{{$phoneWinLatest}}</b></font></small><br>
-
+                <small><i class="fa fa-bandcamp" aria-hidden="true"></i> Tổng tiền đã trao: <font color="blue"><b id="diemdanh_tongtien">{{ number_format($totalAmount) }}</b> VNĐ</font></small>
                 <div class="form-group occard" id="occard">
                     <label for="exampleInputEmail1">Số điện thoại:</label>
                     <input type="text" class="form-control" id="phonevalue" aria-describedby="emailHelp"

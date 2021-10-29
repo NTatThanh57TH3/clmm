@@ -50,6 +50,8 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'],function(){
     Route::post('/setting/no-hu-action', [AdminController::class, 'SettingNoHuAction'])->name('admin_setting_nohu_action');
     Route::get('/setting/thuong-tuan', [AdminController::class, 'SettingThuongTuan'])->name('admin_setting_thuongtuan');
     Route::post('/setting/thuong-tuan-action', [AdminController::class, 'SettingThuongTuanAction'])->name('admin_setting_thuongtuan_action');
+    Route::get('/setting/diem-danh', [AdminController::class, 'SettingAttendance'])->name('admin_setting_diemdanh');
+    Route::post('/setting/diem-danh-action', [AdminController::class, 'SettingAttendanceAction'])->name('admin_setting_diemdanh_action');
     Route::get('/setting/doi-mat-khau', [AdminController::class, 'DoiMatKhau'])->name('admin_doi_mat_khau');
     Route::post('/setting/doi-mat-khau-action', [AdminController::class, 'DoiMatKhauAction'])->name('admin_doi_mat_khau_action');
     Route::get('/setting/update', [AdminController::class, 'Update'])->name('admin_update');

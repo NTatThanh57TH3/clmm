@@ -197,6 +197,18 @@
                         @endif
                     </select>
                 </div>
+                <div class="col-12 col-md-6">
+                    <label>Bật / tắt điểm danh nhận quà:</label>
+                    <select class="form-control" name="on_diemdanh">
+                        @if ($GetSetting->on_diemdanh == 1)
+                            <option value="1" selected>On</option>
+                            <option value="2">Off</option>
+                        @else
+                            <option value="2" selected>Off</option>
+                            <option value="1">On</option>
+                        @endif
+                    </select>
+                </div>
 
                 <div class="col-12 col-md-12"><br /></div>
 
