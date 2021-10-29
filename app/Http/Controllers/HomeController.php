@@ -311,10 +311,17 @@ class HomeController extends Controller
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
         $countUsersAttendance     = count($this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent));
+        $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
+        $usersAttendance          = $usersAttendance->transform(function ($user) {
+            $user->phone = $user->getPhone();
+            return $user;
+        });
+        $phonesAttendance         = implode(",", $usersAttendance->pluck('phone')->toArray());
         return json_encode([
             'session_current_code'   => $attendanceSessionCurrent->id,
             'phone_win_latest'       => $phoneWinLatest,
             'count_users_attendance' => $countUsersAttendance,
+            'phones_attendance'      => $phonesAttendance,
         ], true);
     }
 
@@ -323,6 +330,12 @@ class HomeController extends Controller
         $data = $request->all();
         if (!isset($data['phone'])) {
             return response(['status' => 2, 'message' => "Có lỗi xảy ra vui lòng thử lại"]);
+        }
+        $startTime = Carbon::parse(TIME_START_ATTENDANCE);
+        $endTime   = Carbon::parse(TIME_END_ATTENDANCE);
+        $now       = Carbon::now();
+        if (!$now->between($startTime, $endTime)) {
+            return response(['status' => 2, 'message' => "Thời gian bắt đầu điểm danh từ 7h sáng đến 11h hằng ngày!"]);
         }
         if ($this->checkPhoneHasAttendanceSessionCurrent($data['phone'])) {
             return response(['status' => 2, 'message' => "Số điện thoại của bạn đã điểm danh trong phiên này!"]);

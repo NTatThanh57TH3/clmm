@@ -19,17 +19,20 @@
                 $('.diemdanh_users').html(result.count_users_attendance);
                 $('#diemdanh_last').html(result.phone_win_latest);
                 $('#diemdanh_id').html(result.session_current_code);
+                $('#muc_users').html(result.phones_attendance);
             }, error: function (data) {
             }
         })
     }
 
-    let timelast = Number('{{ $secondRealTime }}');
+    var timelast = Number('{{ $secondRealTime }}');
 
     function setTimeSessionAttendance() {
         setInterval(function () {
             if (timelast > 0) {
                 timelast--;
+            }else{
+                timelast = Number('{{ TIME_EACH_ATTENDANCE_SESSION }}');
             }
 
             $("#diemdanh_thoigian").html(timelast);

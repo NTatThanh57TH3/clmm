@@ -44,7 +44,7 @@ class AttendanceSessionRepository extends Repository
             ];
         }
         $current      = $records->where('status', STATUS_ACTIVE)->last();
-        $sessionsPast = $records->except($current->id);
+        $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
         return [
             'current'          => $current,
             'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "",
