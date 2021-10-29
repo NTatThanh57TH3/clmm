@@ -15,7 +15,7 @@
                                 id="diemdanh_users" class="diemdanh_users">{{ $countUsersAttendance }}</b> người</font></small><br>
 
                 <small><i class="fa fa-clock-o" aria-hidden="true"></i> Quay thưởng sau: <font
-                            color="660000"><b id="diemdanh_thoigian">{{ $secondRealTime }}</b> giây</font></small><br>
+                            color="660000"><b id="diemdanh_thoigian">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b> giây</font></small><br>
                 <small><i class="fa fa-star" aria-hidden="true"></i> Thắng phiên trước: <font
                             color="333300"><b id="diemdanh_last">{{$phoneWinLatest}}</b></font></small><br>
 
@@ -77,7 +77,7 @@
                 </div>
             </div>
             <div class="occho" id="muc_users" style="display:none;">
-                @foreach($usersAttendance as $userAttendance)
+                @foreach($listUserAttendance as $userAttendance)
                     {{ $userAttendance->getPhone() }},
                 @endforeach
             </div>

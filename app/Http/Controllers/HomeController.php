@@ -272,6 +272,11 @@ class HomeController extends Controller
         $secondRealTime           = $this->attendanceSessionRepository->getSecondsRealtime();
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
+        $startTime                = Carbon::parse(TIME_START_ATTENDANCE);
+        $endTime                  = Carbon::parse(TIME_END_ATTENDANCE);
+        $now                      = Carbon::now();
+        $canAttendance            = $now->between($startTime, $endTime);
+        $listUserAttendance       = $usersAttendance->take(10);
         //View
         return view(
             'HomePage.home',
@@ -294,6 +299,8 @@ class HomeController extends Controller
                 'countUsersAttendance',
                 'phoneWinLatest',
                 'usersAttendance',
+                'listUserAttendance',
+                'canAttendance',
             )
         );
     }

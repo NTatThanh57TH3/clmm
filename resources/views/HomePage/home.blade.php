@@ -328,7 +328,7 @@
                                         right: 0;
                                         text-align: center;
                                         font-size: 9px;"><font color="green"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                                    <b id="thoigian_head">{{ $secondRealTime }}</b></font> <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
+                                    <b id="thoigian_head">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b></font> <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
                                     <b id="users_head" class="diemdanh_users">{{ $countUsersAttendance }}</b></font></b>
                         </button>
                     </center>
