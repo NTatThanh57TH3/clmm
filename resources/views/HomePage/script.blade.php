@@ -20,6 +20,7 @@
                 $('#diemdanh_last').html(result.phone_win_latest);
                 $('#diemdanh_id').html(result.session_current_code);
                 $('#muc_users').html(result.phones_attendance);
+                $('#mayman_log').html(result.view_list_session_past);
             }, error: function (data) {
             }
         })
@@ -62,6 +63,8 @@
                     alert(data.message);
                 } else {
                     alert("Điểm danh thành công!");
+                    num1 = Number('{{ random_int(1,9) }}');
+                    num2 = Number('{{ random_int(1,9) }}');
                     $("#phonevalue").val(``)
                 }
             }

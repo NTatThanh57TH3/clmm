@@ -7,6 +7,8 @@
 namespace App\Http\Repositories;
 
 use App\Models\AttendanceSession;
+use App\Models\AttendanceSetting;
+use App\Models\Setting;
 use App\Models\UserAttendanceSession;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
@@ -32,26 +34,11 @@ class AttendanceSessionRepository extends Repository
 
     public function getDataAttendanceSession()
     {
-        $records = AttendanceSession::where('date', Carbon::today()->toDateString())
-            ->orderBy('created_at')
-            ->with(['usersAttendanceSession'])
-            ->get();
-        if (count($records) == 0) {
-            return [
-                'current'          => AttendanceSession::create([
-                    'date' => Carbon::today()->toDateString(),
-                ]),
-                'phone_win_latest' => "*",
-                'sessions_past'    => collect(),
-            ];
+        $cache = Cache::get('cache_data_attendance_session');
+        if (!is_null($cache)) {
+            return $cache;
         }
-        $current      = $records->where('status', STATUS_ACTIVE)->last();
-        $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
-        return [
-            'current'          => $current,
-            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "*",
-            'sessions_past'    => count($sessionsPast) > 0 ? $sessionsPast : collect(),
-        ];
+        return $this->updateCacheDataAttendanceSession();
     }
 
     public function getCurrentAttendanceSession()
@@ -61,13 +48,19 @@ class AttendanceSessionRepository extends Repository
 
     public function getTotalAmountAttendanceSession()
     {
-        return DB::table('attendance_session')->sum('amount');
+        $cache = Cache::get('cache_total_amount_attendance_session');
+        if (!is_null($cache)){
+            return $cache;
+        }
+        $totalAmount = DB::table('attendance_session')->sum('amount');
+        Cache::put('cache_total_amount_attendance_session', $totalAmount, Carbon::now()->addSeconds($this->getSecondsRealtime()));
+        return $totalAmount;
     }
 
     public function getUsersAttendanceSession($attendanceSessionCurrent = null)
     {
         $attendanceSessionCurrent = !is_null($attendanceSessionCurrent) ? $attendanceSessionCurrent : $this->getDataAttendanceSession()['current'];
-        return $attendanceSessionCurrent->usersAttendanceSession;
+        return $attendanceSessionCurrent->usersAttendanceSession()->get();
     }
 
 
@@ -89,7 +82,9 @@ class AttendanceSessionRepository extends Repository
     public function createNewAttendanceSession($currentAttendanceSession)
     {
         $currentAttendanceSession->update(['status' => STATUS_DE_ACTIVE]);
-        return AttendanceSession::create(['date' => Carbon::today()->toDateString()]);
+        $attendanceSession = AttendanceSession::create(['date' => Carbon::today()->toDateString()]);
+        $this->forgetCacheDatAttendanceSession();
+        return $attendanceSession;
     }
 
     public function getPhoneAttendanceSessionBots()
@@ -102,6 +97,72 @@ class AttendanceSessionRepository extends Repository
         $phones = $phones->pluck('phone')->toArray();
         Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
+    }
+
+    public function checkTurOnAttendance()
+    {
+        $setting = $this->getSettingWebsite();
+        if (!isset($setting['on_diemdanh'])) {
+            return true;
+        }
+        return $setting['on_diemdanh'] == TURN_ON_SETTING;
+    }
+
+    public function getSettingWebsite()
+    {
+        $cache = Cache::get('cache_website_setting');
+        if (!is_null($cache)) {
+            return $cache;
+        }
+        $setting = Setting::first()->toArray();
+        Cache::put('cache_website_setting', $setting, Carbon::now()->addDay());
+        return $setting;
+    }
+
+    /**
+     * @return array
+     */
+    public function updateCacheDataAttendanceSession()
+    {
+        $records = AttendanceSession::where('date', Carbon::today()->toDateString())
+            ->orderBy('created_at')
+            ->with(['usersAttendanceSession'])
+            ->get();
+        if (count($records) == 0) {
+            return [
+                'current'          => AttendanceSession::create([
+                    'date' => Carbon::today()->toDateString(),
+                ]),
+                'phone_win_latest' => "*",
+                'sessions_past'    => collect(),
+            ];
+        }
+        $current      = $records->where('status', STATUS_ACTIVE)->last();
+        $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
+        $result       = [
+            'current'          => $current,
+            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "*",
+            'sessions_past'    => count($sessionsPast) > 0 ? $sessionsPast : collect(),
+        ];
+        Cache::put('cache_data_attendance_session', $result, Carbon::now()->addSeconds($this->getSecondsRealtime()));
+        return $result;
+    }
+
+    public function forgetCacheDatAttendanceSession()
+    {
+        Cache::forget('cache_data_attendance_session');
+        Cache::forget('cache_total_amount_attendance_session');
+    }
+
+    public function getAttendanceSetting()
+    {
+        $cache = Cache::get('cache_attendance_setting');
+        if (!is_null($cache)) {
+            return $cache;
+        }
+        $config = AttendanceSetting::first()->toArray();
+        Cache::put('cache_attendance_setting', $config, Carbon::now()->addDay());
+        return $config;
     }
 
 }

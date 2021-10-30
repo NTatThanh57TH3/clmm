@@ -315,10 +315,11 @@
                     </div>
                     <center class="mt-2">
                         <br>
-                        <button style="display:block" class="btn btn-default" server-action="change" server-id="010000"
-                                server-rate="010000">
-                            Điểm danh +100k <br>
-                            <b style="
+                        @if(isset($checkCanAttendance) && $checkCanAttendance)
+                            <button style="display:block" class="btn btn-default" server-action="change" server-id="010000"
+                                    server-rate="010000">
+                                Điểm danh +100k <br>
+                                <b style="
                                         top: 33px;
                                         /* left: 1%; */
                                         /* margin: auto; */
@@ -328,9 +329,11 @@
                                         right: 0;
                                         text-align: center;
                                         font-size: 9px;"><font color="green"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                                    <b id="thoigian_head">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b></font> <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
-                                    <b id="users_head" class="diemdanh_users">{{ $countUsersAttendance }}</b></font></b>
-                        </button>
+                                        <b id="thoigian_head">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b></font>
+                                    <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
+                                        <b id="users_head" class="diemdanh_users">{{ $countUsersAttendance }}</b></font></b>
+                            </button>
+                        @endif
                     </center>
 
                     <div class="row justify-content-md-center box-cl">

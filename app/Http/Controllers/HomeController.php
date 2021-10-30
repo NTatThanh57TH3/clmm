@@ -278,6 +278,7 @@ class HomeController extends Controller
         $now                      = Carbon::now();
         $canAttendance            = $now->between($startTime, $endTime);
         $listUserAttendance       = $usersAttendance->take(10);
+        $checkCanAttendance       = $this->attendanceSessionRepository->checkTurOnAttendance();
         //View
         return view(
             'HomePage.home',
@@ -303,6 +304,7 @@ class HomeController extends Controller
                 'listUserAttendance',
                 'canAttendance',
                 'totalAmount',
+                'checkCanAttendance',
             )
         );
     }
@@ -312,6 +314,7 @@ class HomeController extends Controller
         $dataAttendanceSession    = $this->attendanceSessionRepository->getDataAttendanceSession();
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
+        $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
         $usersAttendance          = $usersAttendance->transform(function($user) {
@@ -320,12 +323,14 @@ class HomeController extends Controller
         });
         $phonesAttendance         = implode(",", $usersAttendance->pluck('phone')->toArray());
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
+        $viewListSessionPast      = view('HomePage.table_sessions_attendance', compact('listSessionsPast'))->render();
         return json_encode([
             'session_current_code'   => $attendanceSessionCurrent->id,
             'phone_win_latest'       => $phoneWinLatest,
             'count_users_attendance' => $countUsersAttendance,
             'phones_attendance'      => $phonesAttendance,
             'total_amount'           => $totalAmount,
+            'view_list_session_past' => $viewListSessionPast,
         ], true);
     }
 

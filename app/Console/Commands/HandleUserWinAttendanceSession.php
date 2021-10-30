@@ -52,15 +52,15 @@ class HandleUserWinAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        $isTurnOn = $this->checkTurOnAttendance();
+        $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
         if ($isTurnOn) {
-            $config    = $this->getAttendanceSetting();
+            $config    = $this->attendanceSessionRepository->getAttendanceSetting();
             $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
             $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
             $now       = Carbon::now();
             if ($now->between($startTime, $endTime)) {
                 $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
-                //            $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
+                $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
                 $randomInt = random_int(1, 10);
                 $billCode  = 'ATTSS-'.bin2hex(random_bytes(3)).'-ME';
                 $amount    = random_int(MONEY_MIN_WIN_ATTENDANCE, MONEY_MAX_WIN_ATTENDANCE);
@@ -121,37 +121,6 @@ class HandleUserWinAttendanceSession extends Command
     public function getUserLichSuMomo()
     {
         return LichSuChoiMomo::where('created_at', '>=', Carbon::today())->with('accountMomo')->get();
-    }
-
-    private function getAttendanceSetting()
-    {
-        $cache = Cache::get('cache_attendance_setting');
-        if (!is_null($cache)) {
-            return $cache;
-        }
-        $config = AttendanceSetting::first()->toArray();
-        Cache::put('cache_attendance_setting', $config, Carbon::now()->addDay());
-        return $config;
-    }
-
-    private function checkTurOnAttendance()
-    {
-        $setting = $this->getSettingWebsite();
-        if (!isset($setting['on_diemdanh'])) {
-            return true;
-        }
-        return $setting['on_diemdanh'] == TURN_ON_SETTING;
-    }
-
-    public function getSettingWebsite()
-    {
-        $cache = Cache::get('cache_website_setting');
-        if (!is_null($cache)) {
-            return $cache;
-        }
-        $setting = Setting::first()->toArray();
-        Cache::put('cache_website_setting', $setting, Carbon::now()->addDay());
-        return $setting;
     }
 
 }

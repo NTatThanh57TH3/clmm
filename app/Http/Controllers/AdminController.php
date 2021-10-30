@@ -396,7 +396,7 @@ class AdminController extends Controller
         $GetSetting = $Setting->first();
 
         $GetSetting->update($request->all());
-        Cache::forget('cache_attendance_setting');
+        Cache::forget('cache_website_setting');
         return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
     }
 
