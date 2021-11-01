@@ -10,6 +10,7 @@ use App\Traits\PhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 class HandleUserWinAttendanceSession extends Command
@@ -52,67 +53,39 @@ class HandleUserWinAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
-        if ($isTurnOn) {
-            $config    = $this->attendanceSessionRepository->getAttendanceSetting();
-            $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
-            $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
-            $now       = Carbon::now();
-            if ($now->between($startTime, $endTime)) {
-                $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
-                $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
-                $randomInt = random_int(1, 10);
-                $billCode  = 'ATTSS-'.bin2hex(random_bytes(3)).'-ME';
-                $amount    = random_int(MONEY_MIN_WIN_ATTENDANCE, MONEY_MAX_WIN_ATTENDANCE);
-                $winRate   = isset($config['win_rate']) ? $config['win_rate'] / 10 : ATTENDANCE_WIN_RATE_DEFAULT;
-                if ($randomInt > $winRate) {
-                    $phoneBots = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
-                    $phoneWin  = $phoneBots[random_int(0, count($phoneBots) - 1)];
-                } else {
-                    $phoneNumber               = new PhoneNumber();
-                    $usersAttendance           = $this->attendanceSessionRepository->getUsersAttendanceSession($currentAttendanceSession);
-                    $usersAttendance           = $usersAttendance->transform(function($userAtten) use ($phoneNumber) {
-                        $userAtten->phone = $phoneNumber->convert($userAtten->phone);
-                        return $userAtten;
-                    });
-                    $usersMomo                 = $this->getUserLichSuMomo();
-                    $usersMomo                 = $usersMomo->transform(function($user) use ($phoneNumber) {
-                        $user->phone = $phoneNumber->convert($user->sdt);
-                        return $user;
-                    })->filter(function($user) {
-                        return !is_null($user->accountMomo);
-                    });
-                    $usersMomoPhone            = $usersMomo->pluck('phone')->unique()->toArray();
-                    $usersAttendance           = $usersAttendance->filter(function($userAttendance) use ($usersMomoPhone
-                    ) {
-                        return in_array($userAttendance->phone, $usersMomoPhone);
-                    });
-                    $phoneUsersAttendance      = $usersAttendance->pluck('phone')->toArray();
-                    $countPhoneUsersAttendance = count($phoneUsersAttendance) > 0 ? count($phoneUsersAttendance) - 1 : 0;
-                    $phoneWin                  = $phoneUsersAttendance[random_int(0,
-                            $countPhoneUsersAttendance)] ?? null;
-                    LichSuChoiMomo::create([
-                        'sdt'        => $phoneWin,
-                        'sdt_get'    => $phoneWin,
-                        'magiaodich' => $billCode,
-                        'tiencuoc'   => 0,
-                        'tiennhan'   => $amount,
-                        'trochoi'    => "DIEM DANH",
-                        'noidung'    => "DD",
-                        'ketqua'     => 1,
-                        'status'     => STATUS_LSMOMO_CHUA_THANH_TOAN,
+        try {
+            $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
+            if ($isTurnOn) {
+                $config    = $this->attendanceSessionRepository->getAttendanceSetting();
+                $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
+                $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
+                $now       = Carbon::now();
+                if ($now->between($startTime, $endTime)) {
+                    $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
+                    $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
+                    $randomInt = random_int(1, 10);
+                    $billCode  = 'ATTSS-'.bin2hex(random_bytes(3)).'-ME';
+                    $amount    = random_int(MONEY_MIN_WIN_ATTENDANCE, MONEY_MAX_WIN_ATTENDANCE);
+                    $winRate   = isset($config['win_rate']) ? $config['win_rate'] / 10 : ATTENDANCE_WIN_RATE_DEFAULT;
+                    if ($randomInt > $winRate) {
+                        $phoneBots = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
+                        $phoneWin  = $phoneBots[random_int(0, count($phoneBots) - 1)];
+                    } else {
+                        $phoneWin = $this->handleUserWin($currentAttendanceSession, $billCode, $amount);
+                    }
+                    $currentAttendanceSession->update([
+                        'phone'     => $phoneWin,
+                        'amount'    => $amount,
+                        'bill_code' => $billCode,
                     ]);
                 }
-                $currentAttendanceSession->update([
-                    'phone'     => $phoneWin,
-                    'amount'    => $amount,
-                    'bill_code' => $billCode,
-                ]);
             }
-        }
-        var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
+            var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
 
-        return Command::SUCCESS;
+            return Command::SUCCESS;
+        } catch (\Throwable $throwable) {
+            Log::info($throwable);
+        }
     }
 
     /**
@@ -121,6 +94,53 @@ class HandleUserWinAttendanceSession extends Command
     public function getUserLichSuMomo()
     {
         return LichSuChoiMomo::where('created_at', '>=', Carbon::today())->with('accountMomo')->get();
+    }
+
+    /**
+     * @param $currentAttendanceSession
+     * @param  string  $billCode
+     * @param  int  $amount
+     *
+     * @return mixed|null
+     * @throws \Exception
+     */
+    private function handleUserWin($currentAttendanceSession, string $billCode, int $amount)
+    {
+        $phoneNumber               = new PhoneNumber();
+        $usersAttendance           = $this->attendanceSessionRepository->getUsersAttendanceSession($currentAttendanceSession);
+        $usersAttendance           = $usersAttendance->transform(function ($userAtten) use ($phoneNumber) {
+            $userAtten->phone = $phoneNumber->convert($userAtten->phone);
+            return $userAtten;
+        });
+        $usersMomo                 = $this->getUserLichSuMomo();
+        $usersMomo                 = $usersMomo->transform(function ($user) use ($phoneNumber) {
+            $user->phone = $phoneNumber->convert($user->sdt);
+            return $user;
+        })->filter(function ($user) {
+            return !is_null($user->accountMomo);
+        });
+        $usersMomoPhone            = $usersMomo->pluck('phone')->unique()->toArray();
+        $usersAttendance           = $usersAttendance->filter(function ($userAttendance) use (
+            $usersMomoPhone
+        ) {
+            return in_array($userAttendance->phone, $usersMomoPhone);
+        });
+        $phoneUsersAttendance      = $usersAttendance->pluck('phone')->toArray();
+        $countPhoneUsersAttendance = count($phoneUsersAttendance) > 0 ? count($phoneUsersAttendance) - 1 : 0;
+        $phoneWin                  = $phoneUsersAttendance[random_int(0,
+                $countPhoneUsersAttendance)] ?? "*";
+        DB::table('lich_su_choi_momos')->insert([
+            'sdt'        => $phoneWin,
+            'sdt_get'    => $phoneWin,
+            'magiaodich' => $billCode,
+            'tiencuoc'   => 0,
+            'tiennhan'   => $amount,
+            'trochoi'    => "DIEM DANH",
+            'noidung'    => "DD",
+            'ketqua'     => 1,
+            'status'     => STATUS_LSMOMO_CHUA_THANH_TOAN,
+        ]);
+        return $phoneWin;
     }
 
 }

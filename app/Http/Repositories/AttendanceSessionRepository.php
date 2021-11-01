@@ -28,8 +28,8 @@ class AttendanceSessionRepository extends Repository
         $hour      = $now->hour;
         $minute    = (int)floor($now->minute);
         $timeStart = Carbon::parse($hour.":".$minute);
-
-        return TIME_EACH_ATTENDANCE_SESSION - (int)($now->timestamp - $timeStart->timestamp);
+        $setting   = $this->getAttendanceSetting();
+        return (int)$setting['time_each'] - (int)($now->timestamp - $timeStart->timestamp);
     }
 
     public function getDataAttendanceSession()
@@ -49,11 +49,12 @@ class AttendanceSessionRepository extends Repository
     public function getTotalAmountAttendanceSession()
     {
         $cache = Cache::get('cache_total_amount_attendance_session');
-        if (!is_null($cache)){
+        if (!is_null($cache)) {
             return $cache;
         }
         $totalAmount = DB::table('attendance_session')->sum('amount');
-        Cache::put('cache_total_amount_attendance_session', $totalAmount, Carbon::now()->addSeconds($this->getSecondsRealtime()));
+        Cache::put('cache_total_amount_attendance_session', $totalAmount,
+            Carbon::now()->addSeconds($this->getSecondsRealtime()));
         return $totalAmount;
     }
 
@@ -82,7 +83,10 @@ class AttendanceSessionRepository extends Repository
     public function createNewAttendanceSession($currentAttendanceSession)
     {
         $currentAttendanceSession->update(['status' => STATUS_DE_ACTIVE]);
-        $attendanceSession = AttendanceSession::create(['date' => Carbon::today()->toDateString()]);
+        $attendanceSession = AttendanceSession::create([
+            'date'   => Carbon::today()->toDateString(),
+            'status' => STATUS_ACTIVE,
+        ]);
         $this->forgetCacheDatAttendanceSession();
         return $attendanceSession;
     }
@@ -97,6 +101,16 @@ class AttendanceSessionRepository extends Repository
         $phones = $phones->pluck('phone')->toArray();
         Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
+    }
+
+    public function getRandomBotsAttendance($botRate = 10, $phoneUserAttendance = [])
+    {
+        $totalBot = count(DB::table('attendance_session_bots')->get());
+        return DB::table('attendance_session_bots')
+            ->whereNotIn('phone', $phoneUserAttendance)
+            ->orderBy(DB::raw('RAND()'))
+            ->take(round(($botRate / 100) * $totalBot))
+            ->get();
     }
 
     public function checkTurOnAttendance()
@@ -138,6 +152,7 @@ class AttendanceSessionRepository extends Repository
             ];
         }
         $current      = $records->where('status', STATUS_ACTIVE)->last();
+        $current      = is_null($current) ? $records->last() : $current;
         $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
         $result       = [
             'current'          => $current,
@@ -160,7 +175,15 @@ class AttendanceSessionRepository extends Repository
         if (!is_null($cache)) {
             return $cache;
         }
-        $config = AttendanceSetting::first()->toArray();
+        $attendance = AttendanceSetting::first();
+        $config     = !is_null($attendance) ? AttendanceSetting::first()->toArray() : AttendanceSetting::create([
+            'win_rate'   => 10,
+            'start_time' => TIME_START_ATTENDANCE,
+            'end_time'   => TIME_END_ATTENDANCE,
+            'money_min'  => MONEY_MIN_WIN_ATTENDANCE,
+            'money_max'  => MONEY_MAX_WIN_ATTENDANCE,
+            'time_each'  => TIME_EACH_ATTENDANCE_SESSION,
+        ])->toArray();
         Cache::put('cache_attendance_setting', $config, Carbon::now()->addDay());
         return $config;
     }

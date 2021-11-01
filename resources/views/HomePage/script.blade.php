@@ -19,8 +19,11 @@
                 $('.diemdanh_users').html(result.count_users_attendance);
                 $('#diemdanh_last').html(result.phone_win_latest);
                 $('#diemdanh_id').html(result.session_current_code);
+                console.log(result.phones_attendance)
                 $('#muc_users').html(result.phones_attendance);
                 $('#mayman_log').html(result.view_list_session_past);
+                $("#diemdanh_thoigian").html(result.second_realtime);
+                $("#thoigian_head").html(result.second_realtime);
             }, error: function (data) {
             }
         })
@@ -36,8 +39,7 @@
                 timelast = Number('{{ TIME_EACH_ATTENDANCE_SESSION }}');
             }
 
-            $("#diemdanh_thoigian").html(timelast);
-            $("#thoigian_head").html(timelast);
+
             socket();
         }, 1000);
     }

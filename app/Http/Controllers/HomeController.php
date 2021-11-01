@@ -155,92 +155,92 @@ class HomeController extends Controller
 
 
         //Thuật toán tìm TOP tuần
-        $TopTuan = [];
-        $dem     = 0;
+        // $TopTuan = [];
+        // $dem     = 0;
 
-        $ListSDT = [];
-        $st      = 0;
+        // $ListSDT = [];
+        // $st      = 0;
 
-        $now           = Carbon::now();
-        $weekStartDate = $now->startOfWeek()->format('Y-m-d H:i');
-        $weekEndDate   = $now->endOfWeek()->format('Y-m-d H:i');
+        // $now           = Carbon::now();
+        // $weekStartDate = $now->startOfWeek()->format('Y-m-d H:i');
+        // $weekEndDate   = $now->endOfWeek()->format('Y-m-d H:i');
 
-        $ListLichSuChoiMomo = $LichSuChoiMomo->whereBetween('created_at',
-            [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
+        // $ListLichSuChoiMomo = $LichSuChoiMomo->whereBetween('created_at',
+        //     [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
 
-        foreach ($ListLichSuChoiMomo as $row) {
-            $sdt = $row->sdt;
+        // foreach ($ListLichSuChoiMomo as $row) {
+        //     $sdt = $row->sdt;
 
-            $check = true;
-            foreach ($ListSDT as $res) {
-                if ($res == $sdt) {
-                    $check = false;
-                }
-            }
+        //     $check = true;
+        //     foreach ($ListSDT as $res) {
+        //         if ($res == $sdt) {
+        //             $check = false;
+        //         }
+        //     }
 
-            if ($check) {
-                $ListSDT[$st] = $sdt;
-                $st++;
-            }
-        }
+        //     if ($check) {
+        //         $ListSDT[$st] = $sdt;
+        //         $st++;
+        //     }
+        // }
 
-        $ListUser = [];
-        $dem      = 0;
+        // $ListUser = [];
+        // $dem      = 0;
 
-        foreach ($ListSDT as $row) {
-            $Result = $LichSuChoiMomo->where([
-                'sdt'    => $row,
-                'status' => 3,
-            ])->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
+        // foreach ($ListSDT as $row) {
+        //     $Result = $LichSuChoiMomo->where([
+        //         'sdt'    => $row,
+        //         'status' => 3,
+        //     ])->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
 
-            $ListUser[$dem]['sdt']      = $row;
-            $ListUser[$dem]['tiencuoc'] = 0;
+        //     $ListUser[$dem]['sdt']      = $row;
+        //     $ListUser[$dem]['tiencuoc'] = 0;
 
-            foreach ($Result as $res) {
-                $ListUser[$dem]['tiencuoc'] = $ListUser[$dem]['tiencuoc'] + $res->tiencuoc;
-            }
+        //     foreach ($Result as $res) {
+        //         $ListUser[$dem]['tiencuoc'] = $ListUser[$dem]['tiencuoc'] + $res->tiencuoc;
+        //     }
 
-            $dem++;
-        }
+        //     $dem++;
+        // }
 
-        $UserTop = [];
-        $st      = 0;
+        // $UserTop = [];
+        // $st      = 0;
 
-        if ($dem > 1) {
-            // Đếm tổng số phần tử của mảng
-            $sophantu = count($ListUser);
-            // Lặp để sắp xếp
-            for ($i = 0; $i < $sophantu - 1; $i++) {
-                // Tìm vị trí phần tử lớn nhất
-                $max = $i;
-                for ($j = $i + 1; $j < $sophantu; $j++) {
-                    if ($ListUser[$j]['tiencuoc'] > $ListUser[$max]['tiencuoc']) {
-                        $max = $j;
-                    }
-                }
-                // Sau khi có vị trí lớn nhất thì hoán vị
-                // với vị trí thứ $i
-                $temp           = $ListUser[$i];
-                $ListUser[$i]   = $ListUser[$max];
-                $ListUser[$max] = $temp;
-            }
+        // if ($dem > 1) {
+        //     // Đếm tổng số phần tử của mảng
+        //     $sophantu = count($ListUser);
+        //     // Lặp để sắp xếp
+        //     for ($i = 0; $i < $sophantu - 1; $i++) {
+        //         // Tìm vị trí phần tử lớn nhất
+        //         $max = $i;
+        //         for ($j = $i + 1; $j < $sophantu; $j++) {
+        //             if ($ListUser[$j]['tiencuoc'] > $ListUser[$max]['tiencuoc']) {
+        //                 $max = $j;
+        //             }
+        //         }
+        //         // Sau khi có vị trí lớn nhất thì hoán vị
+        //         // với vị trí thứ $i
+        //         $temp           = $ListUser[$i];
+        //         $ListUser[$i]   = $ListUser[$max];
+        //         $ListUser[$max] = $temp;
+        //     }
 
-            $UserTop = $ListUser;
-        } else {
-            $UserTop = $ListUser;
-        }
+        //     $UserTop = $ListUser;
+        // } else {
+        //     $UserTop = $ListUser;
+        // }
 
-        $UserTopTuan = [];
-        $dem         = 0;
+        // $UserTopTuan = [];
+        // $dem         = 0;
 
-        foreach ($UserTop as $row) {
-            if ($dem < 5) {
-                $UserTopTuan[$dem]         = $row;
-                $UserTopTuan[$dem]['sdt2'] = substr($row['sdt'], 0, 6).'******';
-                $dem++;
-            }
-        }
-
+        // foreach ($UserTop as $row) {
+        //     if ($dem < 5) {
+        //         $UserTopTuan[$dem]         = $row;
+        //         $UserTopTuan[$dem]['sdt2'] = substr($row['sdt'], 0, 6).'******';
+        //         $dem++;
+        //     }
+        // }
+    $UserTopTuan = [];
         //Phần thưởng tuần
         $SettingPhanThuongTop    = new SettingPhanThuongTop;
         $GetSettingPhanThuongTop = $SettingPhanThuongTop->get();
@@ -317,13 +317,15 @@ class HomeController extends Controller
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
-        $usersAttendance          = $usersAttendance->transform(function($user) {
+        $usersAttendance          = $usersAttendance->transform(function ($user) {
             $user->phone = $user->getPhone();
             return $user;
         });
-        $phonesAttendance         = implode(",", $usersAttendance->pluck('phone')->toArray());
+        $phoneUsersAttendance     = $usersAttendance->pluck('phone')->toArray();
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
+        $phonesAttendance         = view('HomePage.phone_user_attendance', compact('phoneUsersAttendance'))->render();
         $viewListSessionPast      = view('HomePage.table_sessions_attendance', compact('listSessionsPast'))->render();
+        $secondsRealtime          = $this->attendanceSessionRepository->getSecondsRealtime();
         return json_encode([
             'session_current_code'   => $attendanceSessionCurrent->id,
             'phone_win_latest'       => $phoneWinLatest,
@@ -331,6 +333,7 @@ class HomeController extends Controller
             'phones_attendance'      => $phonesAttendance,
             'total_amount'           => $totalAmount,
             'view_list_session_past' => $viewListSessionPast,
+            'second_realtime'        => $secondsRealtime,
         ], true);
     }
 

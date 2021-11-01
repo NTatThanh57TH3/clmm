@@ -27,12 +27,12 @@
                 <input type="hidden" name="id" value="{{ $settingDiemdanh->id }}">
                 <div class="row">
                     <div class="col-12 col-md-6">
-                        <label>Min:</label>
+                        <label>Tiền thắng min(VNĐ):</label>
                         <input class="form-control" name="money_min" value="{{ $settingDiemdanh->money_min }}">
                     </div>
 
                     <div class="col-12 col-md-6">
-                        <label>Max:</label>
+                        <label>Tiền thắng max(VNĐ):</label>
                         <input class="form-control" name="money_max" value="{{ $settingDiemdanh->money_max }}">
                     </div>
                     <div class="col-12 col-md-12"><br/></div>
@@ -49,8 +49,18 @@
 
                     <div class="col-12 col-md-12"><br/></div>
                     <div class="col-12 col-md-6">
-                        <label>Tỉ lệ nguời chơi thắng:</label>
+                        <label>Tỉ lệ nguời chơi thắng(%):</label>
                         <input class="form-control" name="win_rate" value="{{ $settingDiemdanh->win_rate }}">
+                    </div>
+                    <div class="col-12 col-md-6">
+                        <label>Thời gian mỗi phiên điểm danh(giây): </label>
+                        <input class="form-control" name="time_each" value="{{ $settingDiemdanh->time_each }}">
+                    </div>
+                    <div class="col-12 col-md-12"><br/></div>
+
+                    <div class="col-12 col-md-6">
+                        <label>Tỉ lệ bot vào chơi(%)</label>
+                        <input class="form-control" name="bot_rate" value="{{ $settingDiemdanh->bot_rate }}">
                     </div>
                     <div class="col-12 col-md-12"><br/></div>
 

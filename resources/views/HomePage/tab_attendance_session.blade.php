@@ -74,7 +74,7 @@
                     </div>
                 </div>
                 <div class="occho" id="muc_users" style="display:none;">
-                    @foreach($listUserAttendance as $userAttendance)
+                    @foreach($usersAttendance as $userAttendance)
                         {{ $userAttendance->getPhone() }},
                     @endforeach
                 </div>
