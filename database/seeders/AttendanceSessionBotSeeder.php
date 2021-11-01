@@ -18,7 +18,7 @@ class AttendanceSessionBotSeeder extends Seeder
     public function run()
     {
         $dataInsert = [];
-        for ($i = 0; $i <= 200; $i++) {
+        for ($i = 0; $i <= 1000; $i++) {
             $dataInsert[] = [
                 'phone'      => \vnfaker()->mobilePhone(10),
                 'status'     => 1,

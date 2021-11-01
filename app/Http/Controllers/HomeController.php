@@ -40,9 +40,6 @@ class HomeController extends Controller
         $GetSetting->namepage = 'Trang chủ';
 
         //Bảo trì
-        if ($GetSetting->baotri == 1) {
-            return;
-        }
 
         //Chẵn lẻ
         $ChanLe               = new ChanLe;
@@ -90,9 +87,10 @@ class HomeController extends Controller
         //Trạng thái MOMO
         $ListAccount = $AccountMomo->get();
 
-        $ListAccounts = [];
-        $dem          = 0;
-
+        $ListAccounts   = [];
+        $dem            = 0;
+        $LichSuChoiMomo = new LichSuChoiMomo;
+        $LichSumomoDate = $LichSuChoiMomo->whereDate('created_at', Carbon::today())->where('status', '!=', 5)->get();
 
         foreach ($ListAccount as $row) {
             $ListAccounts[$dem]               = $row;
@@ -100,10 +98,7 @@ class HomeController extends Controller
             $ListAccounts[$dem]->status_class = $AccountMomo->ClassStatus($row->status);
 
             $ListAccounts[$dem]->limit1 = 0;
-            $LichSuChoiMomo             = new LichSuChoiMomo;
-            $GetLichSuChoiMomo          = $LichSuChoiMomo->whereDate('created_at', Carbon::today())->where([
-                'sdt_get' => $row->sdt,
-            ])->where('status', '!=', 5)->get();
+            $GetLichSuChoiMomo          = $LichSumomoDate->where(['sdt_get' => $row->sdt]);
 
             foreach ($GetLichSuChoiMomo as $res) {
                 $ListAccounts[$dem]->limit1 = $ListAccounts[$dem]->limit1 + $res->tiennhan;
@@ -135,10 +130,9 @@ class HomeController extends Controller
 
         //Lịch sử chơi Momo
         $LichSuChoiMomo     = new LichSuChoiMomo;
-        $ListLichSuChoiMomo = $LichSuChoiMomo->orderBy('id', 'desc')->get();
+        $ListLichSuChoiMomo = collect();
         $LichSuGiaoDich     = [];
         $dem                = 0;
-
         foreach ($ListLichSuChoiMomo as $row) {
             if ($dem < 10) {
                 if ($row['status'] == 3) {
@@ -240,7 +234,8 @@ class HomeController extends Controller
         //         $dem++;
         //     }
         // }
-    $UserTopTuan = [];
+
+        $UserTopTuan = [];
         //Phần thưởng tuần
         $SettingPhanThuongTop    = new SettingPhanThuongTop;
         $GetSettingPhanThuongTop = $SettingPhanThuongTop->get();
@@ -265,11 +260,11 @@ class HomeController extends Controller
             $GetLichSuChoiNoHus[$dem]['tiennhan2'] = $row['tiennhan'] + $Setting_NoHu->tienmacdinh;
             $dem++;
         }
+        $secondRealTime           = $this->attendanceSessionRepository->getSecondsRealtime();
         $dataAttendanceSession    = $this->attendanceSessionRepository->getDataAttendanceSession();
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
-        $secondRealTime           = $this->attendanceSessionRepository->getSecondsRealtime();
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
         $countUsersAttendance     = count($usersAttendance);
@@ -311,13 +306,14 @@ class HomeController extends Controller
 
     public function realTimeAttendance()
     {
+        $secondsRealtime          = $this->attendanceSessionRepository->getSecondsRealtime();
         $dataAttendanceSession    = $this->attendanceSessionRepository->getDataAttendanceSession();
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
-        $usersAttendance          = $usersAttendance->transform(function ($user) {
+        $usersAttendance          = $usersAttendance->transform(function($user) {
             $user->phone = $user->getPhone();
             return $user;
         });
@@ -325,13 +321,12 @@ class HomeController extends Controller
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
         $phonesAttendance         = view('HomePage.phone_user_attendance', compact('phoneUsersAttendance'))->render();
         $viewListSessionPast      = view('HomePage.table_sessions_attendance', compact('listSessionsPast'))->render();
-        $secondsRealtime          = $this->attendanceSessionRepository->getSecondsRealtime();
         return json_encode([
             'session_current_code'   => $attendanceSessionCurrent->id,
             'phone_win_latest'       => $phoneWinLatest,
             'count_users_attendance' => $countUsersAttendance,
             'phones_attendance'      => $phonesAttendance,
-            'total_amount'           => $totalAmount,
+            'total_amount'           => number_format($totalAmount),
             'view_list_session_past' => $viewListSessionPast,
             'second_realtime'        => $secondsRealtime,
         ], true);

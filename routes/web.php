@@ -14,9 +14,15 @@ use App\Http\Controllers\AdminController;
 |
 */
 
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/realtime-attendance', [HomeController::class, 'realTimeAttendance'])->name('home.attendance.realtime');
-Route::post('/attendance-session', [HomeController::class, 'attendanceSession'])->name('home.attendance_session');
+Route::group(['middleware' => 'maintenance_system'],function() {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::post('/realtime-attendance', [HomeController::class, 'realTimeAttendance'])
+        ->name('home.attendance.realtime');
+    Route::post('/attendance-session', [HomeController::class, 'attendanceSession'])->name('home.attendance_session');
+});
+Route::get('/bao-tri', function() {
+    return view('pages.maintenance_system');
+})->name('bao_tri');
 
 Route::get('/admin/login', [AdminController::class, 'Login'])->name('login')->middleware('guest');
 Route::post('/admin/login-action', [AdminController::class, 'LoginAction'])->name('admin_login_action')->middleware('guest');

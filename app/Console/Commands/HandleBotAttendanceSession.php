@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Repositories\AttendanceSessionRepository;
+use App\Models\AttendanceSession;
 use App\Models\AttendanceSetting;
 use App\Models\LichSuChoiMomo;
 use App\Models\Setting;
@@ -54,35 +55,45 @@ class HandleBotAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        try {
-            $attendanceSetting        = $this->attendanceSessionRepository->getAttendanceSetting();
-            $attendanceSessionCurrent = $this->attendanceSessionRepository->getDataAttendanceSession()['current'];
-            $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
-            $phoneUserAttendance      = $usersAttendance->pluck('phone')->toArray();
-            $botRate                  = $attendanceSetting['bot_rate'] ?? 10;
-            $bots                     = $this->attendanceSessionRepository->getRandomBotsAttendance($botRate, $phoneUserAttendance);
-            $phoneBots                = collect($bots)->pluck("phone")->toArray();
-            $botHandled               = [];
-            for ($i = 0; $i <= 500; $i++) {
-                if (count($botHandled) == count($bots)) {
-                    continue;
+        $config    = $this->attendanceSessionRepository->getAttendanceSetting();
+        $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
+        $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
+        $now       = Carbon::now();
+        if ($now->between($startTime, $endTime)) {
+            try {
+                $attendanceSetting        = $this->attendanceSessionRepository->getAttendanceSetting();
+                $attendanceSessionCurrent = AttendanceSession::where('date', Carbon::today()->toDateString())
+                    ->orderBy('created_at', "DESC")
+                    ->where('status', STATUS_ACTIVE)
+                    ->first();
+                $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
+                $phoneUserAttendance      = $usersAttendance->pluck('phone')->toArray();
+                $botRate                  = $attendanceSetting['bot_rate'] ?? 10;
+                $bots                     = $this->attendanceSessionRepository->getRandomBotsAttendance($botRate,
+                    $phoneUserAttendance);
+                $phoneBots                = collect($bots)->pluck("phone")->toArray();
+                $botHandled               = [];
+                for ($i = 0; $i <= 500; $i++) {
+                    if (count($botHandled) == count($bots)) {
+                        return Command::SUCCESS;
+                    }
+                    $numberBotInsert = random_int(1, 5);
+                    $botsHandling    = collect($phoneBots)->take($numberBotInsert)->toArray();
+                    foreach ($botsHandling as $index => $phoneBot) {
+                        DB::table('users_attendance_session')->insert([
+                            'phone'      => $phoneBot,
+                            'session_id' => $attendanceSessionCurrent->id,
+                        ]);
+                        unset($phoneBots[array_search($phoneBot, $phoneBots)]);
+                    }
+                    $botHandled = array_merge($botHandled, $botsHandling);
+                    sleep(random_int(1, 3));
                 }
-                $numberBotInsert = random_int(1, 5);
-                $botsHandle      = collect($phoneBots)->take($numberBotInsert)->toArray();
-                foreach ($botsHandle as $index => $phoneBot) {
-                    UserAttendanceSession::insert([
-                        'phone'      => $phoneBot,
-                        'session_id' => $attendanceSessionCurrent->id,
-                    ]);
-                    unset($phoneBots[array_search($phoneBot, $phoneBots)]);
-                }
-                $botHandled = array_merge($botHandled, $botsHandle);
-                sleep(random_int(2, 10));
+                var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
+                return Command::SUCCESS;
+            } catch (\Throwable $throwable) {
+                Log::info($throwable);
             }
-            var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
-            return Command::SUCCESS;
-        } catch (\Throwable $throwable) {
-            Log::info($throwable);
         }
     }
 

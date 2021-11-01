@@ -29,7 +29,11 @@ class AttendanceSessionRepository extends Repository
         $minute    = (int)floor($now->minute);
         $timeStart = Carbon::parse($hour.":".$minute);
         $setting   = $this->getAttendanceSetting();
-        return (int)$setting['time_each'] - (int)($now->timestamp - $timeStart->timestamp);
+        $realTimeSeconds         = (int)$setting['time_each'] - (int)($now->timestamp - $timeStart->timestamp);
+        if ($realTimeSeconds <= 1 ){
+            $this->forgetCacheDatAttendanceSession();
+        }
+        return $realTimeSeconds;
     }
 
     public function getDataAttendanceSession()
@@ -93,13 +97,13 @@ class AttendanceSessionRepository extends Repository
 
     public function getPhoneAttendanceSessionBots()
     {
-        $cache = Cache::get('cache_phone_attendance_session_bots');
-        if (!is_null($cache)) {
-            return $cache;
-        }
+//        $cache = Cache::get('cache_phone_attendance_session_bots');
+//        if (!is_null($cache)) {
+//            return $cache;
+//        }
         $phones = collect(DB::table('attendance_session_bots')->select('phone')->get());
         $phones = $phones->pluck('phone')->toArray();
-        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
+//        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
     }
 
@@ -156,7 +160,7 @@ class AttendanceSessionRepository extends Repository
         $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
         $result       = [
             'current'          => $current,
-            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->last()->getPhone() : "*",
+            'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->first()->getPhone() : "*",
             'sessions_past'    => count($sessionsPast) > 0 ? $sessionsPast : collect(),
         ];
         Cache::put('cache_data_attendance_session', $result, Carbon::now()->addSeconds($this->getSecondsRealtime()));
