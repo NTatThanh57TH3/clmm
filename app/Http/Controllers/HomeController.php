@@ -274,6 +274,8 @@ class HomeController extends Controller
         $canAttendance            = $now->between($startTime, $endTime);
         $listUserAttendance       = $usersAttendance->take(10);
         $checkCanAttendance       = $this->attendanceSessionRepository->checkTurOnAttendance();
+        $timeEach                 = $this->attendanceSessionRepository->getAttendanceSetting()['time_each'];
+
         //View
         return view(
             'HomePage.home',
@@ -300,6 +302,7 @@ class HomeController extends Controller
                 'canAttendance',
                 'totalAmount',
                 'checkCanAttendance',
+                'timeEach',
             )
         );
     }
@@ -313,7 +316,7 @@ class HomeController extends Controller
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
-        $usersAttendance          = $usersAttendance->transform(function($user) {
+        $usersAttendance          = $usersAttendance->transform(function ($user) {
             $user->phone = $user->getPhone();
             return $user;
         });

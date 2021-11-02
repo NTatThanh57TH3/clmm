@@ -64,7 +64,7 @@ class HandleBotAttendanceSession extends Command
                 $attendanceSetting        = $this->attendanceSessionRepository->getAttendanceSetting();
                 $attendanceSessionCurrent = AttendanceSession::where('date', Carbon::today()->toDateString())
                     ->orderBy('created_at', "DESC")
-                    ->where('status', STATUS_ACTIVE)
+//                    ->where('status', STATUS_ACTIVE)
                     ->first();
                 $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
                 $phoneUserAttendance      = $usersAttendance->pluck('phone')->toArray();

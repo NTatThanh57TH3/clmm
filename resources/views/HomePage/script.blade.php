@@ -22,7 +22,6 @@
                 $('#muc_users').html(result.phones_attendance);
                 $('#mayman_log').html(result.view_list_session_past);
                 $("#diemdanh_thoigian").html(result.second_realtime);
-                $("#thoigian_head").html(result.second_realtime);
                 $("#diemdanh_tongtien").html(result.total_amount);
             }, error: function (data) {
             }
@@ -36,9 +35,9 @@
             if (timelast > 0) {
                 timelast--;
             }else{
-                timelast = Number('{{ TIME_EACH_ATTENDANCE_SESSION }}');
+                timelast = Number('{{ $timeEach }}');
             }
-
+            $("#thoigian_head").html(timelast);
 
             socket();
         }, 1000);
