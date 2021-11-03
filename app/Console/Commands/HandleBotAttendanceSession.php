@@ -64,7 +64,7 @@ class HandleBotAttendanceSession extends Command
                 $attendanceSetting        = $this->attendanceSessionRepository->getAttendanceSetting();
                 $attendanceSessionCurrent = AttendanceSession::where('date', Carbon::today()->toDateString())
                     ->orderBy('created_at', "DESC")
-//                    ->where('status', STATUS_ACTIVE)
+                    //                    ->where('status', STATUS_ACTIVE)
                     ->first();
                 $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
                 $phoneUserAttendance      = $usersAttendance->pluck('phone')->toArray();
@@ -72,13 +72,19 @@ class HandleBotAttendanceSession extends Command
                 $bots                     = $this->attendanceSessionRepository->getRandomBotsAttendance($botRate,
                     $phoneUserAttendance);
                 $phoneBots                = collect($bots)->pluck("phone")->toArray();
+                $countBot                 = count(collect($bots));
                 $botHandled               = [];
+                sleep(3);
                 for ($i = 0; $i <= 500; $i++) {
                     if (count($botHandled) == count($bots)) {
                         return Command::SUCCESS;
                     }
-                    $numberBotInsert = random_int(1, 5);
-                    $botsHandling    = collect($phoneBots)->take($numberBotInsert)->toArray();
+                    if ($countBot < 50) {
+                        $numberBotInsert = random_int(1, 3);
+                    } else {
+                        $numberBotInsert = random_int(2, 5);
+                    }
+                    $botsHandling = collect($phoneBots)->take($numberBotInsert)->toArray();
                     foreach ($botsHandling as $index => $phoneBot) {
                         DB::table('users_attendance_session')->insert([
                             'phone'      => $phoneBot,
@@ -87,7 +93,11 @@ class HandleBotAttendanceSession extends Command
                         unset($phoneBots[array_search($phoneBot, $phoneBots)]);
                     }
                     $botHandled = array_merge($botHandled, $botsHandling);
-                    sleep(random_int(1, 3));
+                    if ($countBot < 50) {
+                        sleep(random_int(2, 5));
+                    }else{
+                        sleep(random_int(1, 3));
+                    }
                 }
                 var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
                 return Command::SUCCESS;

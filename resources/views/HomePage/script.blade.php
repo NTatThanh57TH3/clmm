@@ -21,7 +21,6 @@
                 $('#diemdanh_id').html(result.session_current_code);
                 $('#muc_users').html(result.phones_attendance);
                 $('#mayman_log').html(result.view_list_session_past);
-                $("#diemdanh_thoigian").html(result.second_realtime);
                 $("#diemdanh_tongtien").html(result.total_amount);
             }, error: function (data) {
             }
@@ -38,8 +37,9 @@
                 timelast = Number('{{ $timeEach }}');
             }
             $("#thoigian_head").html(timelast);
-
-            socket();
+            $("#diemdanh_thoigian").html(timelast);
+            if (timelast%2 == 0)
+                socket();
         }, 1000);
     }
 

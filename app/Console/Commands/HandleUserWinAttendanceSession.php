@@ -61,37 +61,45 @@ class HandleUserWinAttendanceSession extends Command
         try {
             $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
             if ($isTurnOn) {
-                $config    = $this->attendanceSessionRepository->getAttendanceSetting();
-                $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
-                $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
-                $now       = Carbon::now();
-                if ($now->between($startTime, $endTime)) {
-                    $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
-                    $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($currentAttendanceSession);
-                    if (count($usersAttendance) == 0) {
-                        return Command::SUCCESS;
+                $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
+//                for ($i = 0; $i <= $realtimeSecond; $i++) {
+//                    $realtimeSecond --;
+//                    var_dump($i, $realtimeSecond);
+//                    sleep(1);
+//                }
+//                return Command::SUCCESS;
+//                $config    = $this->attendanceSessionRepository->getAttendanceSetting();
+                    $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
+                    $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
+                    $now       = Carbon::now();
+                    if ($now->between($startTime, $endTime)) {
+                        $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
+                        $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($currentAttendanceSession);
+                        if (count($usersAttendance) == 0) {
+                            return Command::SUCCESS;
+                        }
+                        $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
+                        $randomInt       = random_int(1, 10);
+                        $billCode        = 'ATTSS-'.bin2hex(random_bytes(3)).'-ME';
+                        $amount          = random_int($config['money_min'] ?? MONEY_MIN_WIN_ATTENDANCE,
+                            $config['money_max'] ?? MONEY_MAX_WIN_ATTENDANCE);
+                        $winRate         = isset($config['win_rate']) ? $config['win_rate'] / 10 : ATTENDANCE_WIN_RATE_DEFAULT;
+                        $usersAttendance = $usersAttendance->transform(function($userAtten) {
+                            $userAtten->phone = $this->convertPhoneNumber->convert($userAtten->phone);
+                            return $userAtten;
+                        });
+                        if ($randomInt > $winRate) {
+                            $phoneWin = $this->handleBotWin($usersAttendance);
+                        } else {
+                            $phoneWin = $this->handleUserWin($usersAttendance, $billCode,
+                                $amount);
+                        }
+                        $currentAttendanceSession->update([
+                            'phone'     => $phoneWin,
+                            'amount'    => $amount,
+                            'bill_code' => $billCode,
+                        ]);
                     }
-                    $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
-                    $randomInt       = random_int(1, 10);
-                    $billCode        = 'ATTSS-'.bin2hex(random_bytes(3)).'-ME';
-                    $amount          = random_int(MONEY_MIN_WIN_ATTENDANCE, MONEY_MAX_WIN_ATTENDANCE);
-                    $winRate         = isset($config['win_rate']) ? $config['win_rate'] / 10 : ATTENDANCE_WIN_RATE_DEFAULT;
-                    $usersAttendance = $usersAttendance->transform(function($userAtten) {
-                        $userAtten->phone = $this->convertPhoneNumber->convert($userAtten->phone);
-                        return $userAtten;
-                    });
-                    if ($randomInt > $winRate) {
-                        $phoneWin = $this->handleBotWin($usersAttendance);
-                    } else {
-                        $phoneWin = $this->handleUserWin($usersAttendance, $billCode,
-                            $amount);
-                    }
-                    $currentAttendanceSession->update([
-                        'phone'     => $phoneWin,
-                        'amount'    => $amount,
-                        'bill_code' => $billCode,
-                    ]);
-                }
             }
             var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
 
@@ -165,8 +173,9 @@ class HandleUserWinAttendanceSession extends Command
         $phoneBots            = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
-        $phoneWin             = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
-        return $phoneWin;
+        Log::info(json_encode($phoneBotsWin));
+        return $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)] ?? $phoneBots[random_int(0,
+                count($phoneBots) - 1)];
     }
 
 }

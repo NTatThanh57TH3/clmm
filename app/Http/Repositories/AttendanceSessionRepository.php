@@ -26,14 +26,22 @@ class AttendanceSessionRepository extends Repository
     {
         $now       = Carbon::now();
         $hour      = $now->hour;
-        $minute    = (int)floor($now->minute);
-        $timeStart = Carbon::parse($hour.":".$minute);
         $setting   = $this->getAttendanceSetting();
-        $realTimeSeconds         = (int)$setting['time_each'] - (int)($now->timestamp - $timeStart->timestamp);
+        $timeEach = (int)$setting['time_each'];
+//        $timeStart = $this->getTimeStartByConfigTimeEach();
+//        dd($now->minute%3);
+//        $minute    = (int)floor($now->minute / 10) * 3;
+                $minute    = (int)floor($now->minute);
+//        dd($hour.":".$minute);
+        $timeStart = Carbon::parse($hour.":".$minute);
+        $realTimeSeconds         = $timeEach - (int)($now->timestamp - $timeStart->timestamp);
         if ($realTimeSeconds <= 1 ){
             $this->forgetCacheDatAttendanceSession();
         }
         return $realTimeSeconds;
+    }
+    private function getTimeStartByConfigTimeEach()
+    {
     }
 
     public function getDataAttendanceSession()
@@ -191,5 +199,6 @@ class AttendanceSessionRepository extends Repository
         Cache::put('cache_attendance_setting', $config, Carbon::now()->addDay());
         return $config;
     }
+
 
 }
