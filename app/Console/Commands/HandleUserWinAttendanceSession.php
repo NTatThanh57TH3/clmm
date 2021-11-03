@@ -144,6 +144,7 @@ class HandleUserWinAttendanceSession extends Command
         $countPhoneUsersAttendance = count($phoneUsersAttendance) > 0 ? count($phoneUsersAttendance) - 1 : 0;
         $phoneWin                  = $phoneUsersAttendance[random_int(0,
                 $countPhoneUsersAttendance)] ?? null;
+        Log::info($phoneWin);
         if (is_null($phoneWin)) {
             $phoneWin = $this->handleBotWin($usersAttendance);
         } else {
@@ -174,8 +175,12 @@ class HandleUserWinAttendanceSession extends Command
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
         Log::info(json_encode($phoneBotsWin));
-        return $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)] ?? $phoneBots[random_int(0,
-                count($phoneBots) - 1)];
+        if (count($phoneBotsWin) > 0){
+            $phoneBotWin = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
+        }else{
+            $phoneBotWin = $phoneBots[random_int(0, count($phoneBots) - 1)];
+        }
+        return $phoneBotWin;
     }
 
 }

@@ -71,8 +71,11 @@ class HandleBotAttendanceSession extends Command
                 $botRate                  = $attendanceSetting['bot_rate'] ?? 10;
                 $bots                     = $this->attendanceSessionRepository->getRandomBotsAttendance($botRate,
                     $phoneUserAttendance);
-                $phoneBots                = collect($bots)->pluck("phone")->toArray();
-                $countBot                 = count(collect($bots));
+                $randomNumberTakeBot      = random_int(60, 100);
+                $phoneBots                = collect($bots)
+                    ->take(round(($randomNumberTakeBot / 100) * count($bots)))
+                    ->pluck("phone")
+                    ->toArray();
                 $botHandled               = [];
                 sleep(3);
                 for ($i = 0; $i <= 500; $i++) {
