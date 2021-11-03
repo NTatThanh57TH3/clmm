@@ -76,6 +76,7 @@ class HandleBotAttendanceSession extends Command
                     ->take(round(($randomNumberTakeBot / 100) * count($bots)))
                     ->pluck("phone")
                     ->toArray();
+                $countBot                 = count(collect($bots));
                 $botHandled               = [];
                 sleep(3);
                 for ($i = 0; $i <= 500; $i++) {
