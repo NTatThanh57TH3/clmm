@@ -149,7 +149,7 @@
         loadhu();
         setInterval(function () {
             loadhu();
-        }, 3000);
+        }, 10000);
     </script>
     @include('HomePage.script')
 

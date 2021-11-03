@@ -18,6 +18,7 @@ use Illuminate\Support\Carbon;
 use App\Models\NoHuu;
 use App\Models\LichSuChoiNoHu;
 use App\Models\LichSuBank;
+use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
 {
@@ -311,19 +312,31 @@ class HomeController extends Controller
 
     public function realTimeAttendance()
     {
+        $time1 = Carbon::now();
         $secondsRealtime          = $this->attendanceSessionRepository->getSecondsRealtime();
+        $time2 = Carbon::now();
+//        Log::info("Time1: ".$time2->diffInSeconds($time1));
         $dataAttendanceSession    = $this->attendanceSessionRepository->getDataAttendanceSession();
         $attendanceSessionCurrent = $dataAttendanceSession['current'];
         $phoneWinLatest           = $dataAttendanceSession['phone_win_latest'];
         $listSessionsPast         = $dataAttendanceSession['sessions_past'];
+        $time3 = Carbon::now();
+//        Log::info("Time2: ".$time3->diffInSeconds($time1));
+
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $countUsersAttendance     = count($usersAttendance);
-        $usersAttendance          = $usersAttendance->transform(function($user) {
-            $user->phone = $user->getPhone();
-            return $user;
-        });
+//        $usersAttendance          = $usersAttendance->transform(function($user) {
+//            $user->phone = $user->getPhone();
+//            return $user;
+//        });
         $phoneUsersAttendance     = $usersAttendance->pluck('phone')->toArray();
+        $time4 = Carbon::now();
+//        Log::info("Time3: ".$time4->diffInSeconds($time1));
+
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
+        $time5 = Carbon::now();
+//        Log::info("Time4: ".$time5->diffInSeconds($time1));
+
         $phonesAttendance         = view('HomePage.phone_user_attendance', compact('phoneUsersAttendance'))->render();
         $viewListSessionPast      = view('HomePage.table_sessions_attendance', compact('listSessionsPast'))->render();
         return json_encode([

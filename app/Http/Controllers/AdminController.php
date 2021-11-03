@@ -28,6 +28,7 @@ use App\Models\ConfigMessageMomo;
 use App\Models\User;
 use App\Models\WEB2M;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -931,6 +932,7 @@ class AdminController extends Controller
         $GetSetting->namepage = 'Cấu hình điểm danh nhận quà';
         $GetSetting->action   = 'admin_setting_diemdanh_action';
         $settingDiemdanh      = AttendanceSetting::first();
+        $configTimeEach       = Config::get('attendance_session.time_each');
         if (is_null($settingDiemdanh)) {
             $settingDiemdanh = AttendanceSetting::create([
                 'win_rate'   => 10,
@@ -941,7 +943,7 @@ class AdminController extends Controller
                 'time_each'  => TIME_EACH_ATTENDANCE_SESSION,
             ]);
         }
-        return view('AdminPage.setting_diemdanh', compact('GetSetting', 'settingDiemdanh'));
+        return view('AdminPage.setting_diemdanh', compact('GetSetting', 'settingDiemdanh', 'configTimeEach'));
     }
 
     public function SettingAttendanceAction()

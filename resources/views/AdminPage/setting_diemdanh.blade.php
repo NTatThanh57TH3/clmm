@@ -54,7 +54,12 @@
                     </div>
                     <div class="col-12 col-md-6">
                         <label>Thời gian mỗi phiên điểm danh(giây): </label>
-                        <input class="form-control" name="time_each" value="{{ $settingDiemdanh->time_each }}">
+                        <select class="form-control" name="time_each">
+                            @foreach($configTimeEach as $time)
+                                <option value="{{ $time }}" {{ $time == $settingDiemdanh->time_each ? "selected" : "" }}>{{ $time }} giây</option>
+                            @endforeach
+                        </select>
+                        {{--                        <input class="form-control" name="time_each" value="{{ $settingDiemdanh->time_each }}">--}}
                     </div>
                     <div class="col-12 col-md-12"><br/></div>
 

@@ -10,15 +10,23 @@ Note: Trong chế độ demo, js sẽ bị mã hóa. Để tải source đầy �
 <link rel="shortcut icon" href="{{ asset('image/favicon.png') }}">
 <style type="text/css">
     body {
-        background-image:url({{ asset('image/ss-countdown-main-bg.png') }});
+        background-image: url({{ asset('image/ss-countdown-main-bg.png') }});
     }
+
     .ss-countdown-container .ss-bg-layer {
-        background-image:url({{ asset('image/ss-countdown-bg.png') }});
-        background-repeat:no-repeat;
-        position:relative;
+        background-image: url({{ asset('image/ss-countdown-bg.png') }});
+        background-repeat: no-repeat;
+        position: relative;
     }
 </style>
-
+<script>
+    function reloadPage(){
+        @if($setting['baotri'] == 0)
+            window.location.href = "{{ route('home') }}";
+        @endif
+    }
+    reloadPage();
+</script>
 <div class="ss-countdown-container">
     <h1>Website đang bảo trì!</h1>
     <h4>Bạn có thể quay trở lại sau:</h4>
@@ -57,6 +65,8 @@ Note: Trong chế độ demo, js sẽ bị mã hóa. Để tải source đầy �
     </div>
 </div>
 <script type="text/javascript">
+
+
     (function () {
         "use strict";
         var isSafari = /Safari/.test(navigator.userAgent) && /Apple Computer/.test(navigator.vendor),

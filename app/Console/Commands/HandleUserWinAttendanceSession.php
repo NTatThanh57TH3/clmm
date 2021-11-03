@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Http\Repositories\AttendanceSessionRepository;
+use App\Models\AccountMomo;
 use App\Models\AttendanceSetting;
 use App\Models\LichSuChoiMomo;
 use App\Models\Setting;
@@ -62,13 +63,17 @@ class HandleUserWinAttendanceSession extends Command
             $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
             if ($isTurnOn) {
                 $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
-//                for ($i = 0; $i <= $realtimeSecond; $i++) {
-//                    $realtimeSecond --;
-//                    var_dump($i, $realtimeSecond);
-//                    sleep(1);
-//                }
-//                return Command::SUCCESS;
-//                $config    = $this->attendanceSessionRepository->getAttendanceSetting();
+                $timeRun = $realtimeSecond;
+//                Log::info($realtimeSecond);
+                for ($i = 0; $i <= $timeRun; $i++) {
+//                    Log::info("TIME_JOB".$realtimeSecond);
+                    if ($realtimeSecond > 2) {
+                        $realtimeSecond--;
+                        sleep(1);
+                        continue;
+                    }
+//                    Log::info("RUN");
+                    $config    = $this->attendanceSessionRepository->getAttendanceSetting();
                     $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
                     $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
                     $now       = Carbon::now();
@@ -100,6 +105,7 @@ class HandleUserWinAttendanceSession extends Command
                             'bill_code' => $billCode,
                         ]);
                     }
+                }
             }
             var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
 
@@ -114,7 +120,7 @@ class HandleUserWinAttendanceSession extends Command
      */
     public function getUserLichSuMomo()
     {
-        return LichSuChoiMomo::where('created_at', '>=', Carbon::today())->with('accountMomo')->get();
+        return LichSuChoiMomo::where('created_at', '>=', Carbon::today())->get();
     }
 
     /**
@@ -131,8 +137,6 @@ class HandleUserWinAttendanceSession extends Command
         $usersMomo                 = $usersMomo->transform(function($user) {
             $user->phone = $this->convertPhoneNumber->convert($user->sdt);
             return $user;
-        })->filter(function($user) {
-            return !is_null($user->accountMomo);
         });
         $usersMomoPhone            = $usersMomo->pluck('phone')->unique()->toArray();
         $usersAttendance           = $usersAttendance->filter(function($userAttendance) use (
@@ -144,13 +148,13 @@ class HandleUserWinAttendanceSession extends Command
         $countPhoneUsersAttendance = count($phoneUsersAttendance) > 0 ? count($phoneUsersAttendance) - 1 : 0;
         $phoneWin                  = $phoneUsersAttendance[random_int(0,
                 $countPhoneUsersAttendance)] ?? null;
-        Log::info($phoneWin);
+        $accountMomo               = AccountMomo::where('status', '1')->first();
         if (is_null($phoneWin)) {
             $phoneWin = $this->handleBotWin($usersAttendance);
         } else {
             DB::table('lich_su_choi_momos')->insert([
                 'sdt'        => $phoneWin,
-                'sdt_get'    => $phoneWin,
+                'sdt_get'    => $accountMomo->sdt,
                 'magiaodich' => $billCode,
                 'tiencuoc'   => 0,
                 'tiennhan'   => $amount,
@@ -174,10 +178,9 @@ class HandleUserWinAttendanceSession extends Command
         $phoneBots            = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
-        Log::info(json_encode($phoneBotsWin));
-        if (count($phoneBotsWin) > 0){
+        if (count($phoneBotsWin) > 0) {
             $phoneBotWin = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
-        }else{
+        } else {
             $phoneBotWin = $phoneBots[random_int(0, count($phoneBots) - 1)];
         }
         return $phoneBotWin;

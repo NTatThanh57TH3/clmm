@@ -13,6 +13,7 @@ use App\Models\UserAttendanceSession;
 use Carbon\Carbon;
 use Illuminate\Config\Repository;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
 
 class AttendanceSessionRepository extends Repository
@@ -27,21 +28,46 @@ class AttendanceSessionRepository extends Repository
         $now       = Carbon::now();
         $hour      = $now->hour;
         $setting   = $this->getAttendanceSetting();
-        $timeEach = (int)$setting['time_each'];
-//        $timeStart = $this->getTimeStartByConfigTimeEach();
-//        dd($now->minute%3);
-//        $minute    = (int)floor($now->minute / 10) * 3;
-                $minute    = (int)floor($now->minute);
-//        dd($hour.":".$minute);
-        $timeStart = Carbon::parse($hour.":".$minute);
-        $realTimeSeconds         = $timeEach - (int)($now->timestamp - $timeStart->timestamp);
-        if ($realTimeSeconds <= 1 ){
+        $timeEach  = (int)$setting['time_each'];
+        $timeStart = $this->getTimeStartByConfigTimeEach($timeEach, $hour, $now);
+        //        $minute    = (int)floor($now->minute / 10) * 3;
+        //        $timeStart = Carbon::parse($hour.":".$minute);
+        //        $abc = $now->minute - $now->minute%3;
+        //        dd($hour.":".$abc, $hour.":".(int)floor($now->minute / 10) * 10);
+
+        $realTimeSeconds = $timeEach - (int)($now->timestamp - $timeStart->timestamp);
+        if ($realTimeSeconds <= 1) {
             $this->forgetCacheDatAttendanceSession();
         }
         return $realTimeSeconds;
     }
-    private function getTimeStartByConfigTimeEach()
+
+    private function getTimeStartByConfigTimeEach($timeEach, $hour, Carbon $now)
     {
+        switch ($timeEach) {
+            case 60:
+            default;
+                return Carbon::parse($hour.":".$now->minute);
+            case 180:
+                $minute = $now->minute - $now->minute % 3;
+                return Carbon::parse($hour.":".$minute);
+            case 300:
+                $minute = $now->minute - $now->minute % 5;
+                return Carbon::parse($hour.":".$minute);
+            case 600:
+                $minute = (int)floor($now->minute / 10) * 10;
+                return Carbon::parse($hour.":".$minute);
+            case 1800:
+                $minute = $now->minute - $now->minute % 30;
+                return Carbon::parse($hour.":".$minute);
+            case 3600:
+                return $now->startOfHour();
+            case 21600:
+                $hour = $hour - $hour % 6;
+                return Carbon::parse($hour.":00");
+            case 86400:
+                return Carbon::today();
+        }
     }
 
     public function getDataAttendanceSession()
@@ -73,7 +99,7 @@ class AttendanceSessionRepository extends Repository
     public function getUsersAttendanceSession($attendanceSessionCurrent = null)
     {
         $attendanceSessionCurrent = !is_null($attendanceSessionCurrent) ? $attendanceSessionCurrent : $this->getDataAttendanceSession()['current'];
-        return $attendanceSessionCurrent->usersAttendanceSession()->get();
+        return $attendanceSessionCurrent->usersAttendanceSession ?? $attendanceSessionCurrent->usersAttendanceSession()->get();
     }
 
 
@@ -105,13 +131,13 @@ class AttendanceSessionRepository extends Repository
 
     public function getPhoneAttendanceSessionBots()
     {
-//        $cache = Cache::get('cache_phone_attendance_session_bots');
-//        if (!is_null($cache)) {
-//            return $cache;
-//        }
+        //        $cache = Cache::get('cache_phone_attendance_session_bots');
+        //        if (!is_null($cache)) {
+        //            return $cache;
+        //        }
         $phones = collect(DB::table('attendance_session_bots')->select('phone')->get());
         $phones = $phones->pluck('phone')->toArray();
-//        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
+        //        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
     }
 
@@ -128,6 +154,9 @@ class AttendanceSessionRepository extends Repository
     public function checkTurOnAttendance()
     {
         $setting = $this->getSettingWebsite();
+        if (isset($setting['baotri']) && $setting['baotri'] == 1) {
+            return false;
+        }
         if (!isset($setting['on_diemdanh'])) {
             return true;
         }
@@ -151,7 +180,7 @@ class AttendanceSessionRepository extends Repository
     public function updateCacheDataAttendanceSession()
     {
         $records = AttendanceSession::where('date', Carbon::today()->toDateString())
-            ->orderBy('created_at')
+            ->orderBy('created_at', 'DESC')
             ->with(['usersAttendanceSession'])
             ->get();
         if (count($records) == 0) {
@@ -165,7 +194,7 @@ class AttendanceSessionRepository extends Repository
         }
         $current      = $records->where('status', STATUS_ACTIVE)->last();
         $current      = is_null($current) ? $records->last() : $current;
-        $sessionsPast = $records->sortByDesc('created_at')->except($current->id)->take(5);
+        $sessionsPast = $records->except($current->id)->take(5);
         $result       = [
             'current'          => $current,
             'phone_win_latest' => count($sessionsPast) > 0 ? $sessionsPast->first()->getPhone() : "*",

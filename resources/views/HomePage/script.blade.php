@@ -42,14 +42,16 @@
                 socket();
         }, 1000);
     }
+    function getRndInteger(min,max){return Math.floor(Math.random()*(max-min))+min;}
 
     function diemdanh() {
+        var num1 = getRndInteger(1, 9);
+        var num2 = getRndInteger(1, 9);
         if ($("#phonevalue").val().length <= 9) {
             alert(`Khong hop le`);
             return false;
         }
-        let num1 = Number('{{ random_int(1,9) }}');
-        let num2 = Number('{{ random_int(1,9) }}');
+
         let person = prompt("Mã xác minh " + num1 + "+" + num2 + "= ?:", "");
         if (person == null || person != (num1 + num2)) {
             alert(`Bạn đã nhập sai phép tính. Vui lòng thử lại`);
