@@ -99,7 +99,7 @@ class AttendanceSessionRepository extends Repository
     public function getUsersAttendanceSession($attendanceSessionCurrent = null)
     {
         $attendanceSessionCurrent = !is_null($attendanceSessionCurrent) ? $attendanceSessionCurrent : $this->getDataAttendanceSession()['current'];
-        return $attendanceSessionCurrent->usersAttendanceSession ?? $attendanceSessionCurrent->usersAttendanceSession()->get();
+        return $attendanceSessionCurrent->usersAttendanceSession()->get();
     }
 
 
