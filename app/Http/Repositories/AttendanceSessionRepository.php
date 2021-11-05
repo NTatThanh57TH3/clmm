@@ -23,7 +23,7 @@ class AttendanceSessionRepository extends Repository
     {
     }
 
-    public function getSecondsRealtime()
+    public function getSecondsRealtime($updateCache = false)
     {
         $now       = Carbon::now();
         $hour      = $now->hour;
@@ -36,7 +36,7 @@ class AttendanceSessionRepository extends Repository
         //        dd($hour.":".$abc, $hour.":".(int)floor($now->minute / 10) * 10);
 
         $realTimeSeconds = $timeEach - (int)($now->timestamp - $timeStart->timestamp);
-        if ($realTimeSeconds <= 1) {
+        if ($realTimeSeconds <= 1 || $updateCache) {
             $this->forgetCacheDatAttendanceSession();
         }
         return $realTimeSeconds;
@@ -56,6 +56,12 @@ class AttendanceSessionRepository extends Repository
                 return Carbon::parse($hour.":".$minute);
             case 600:
                 $minute = (int)floor($now->minute / 10) * 10;
+                return Carbon::parse($hour.":".$minute);
+            case 900:
+                $minute = $now->minute - $now->minute % 15;
+                return Carbon::parse($hour.":".$minute);
+            case 1200:
+                $minute = $now->minute - $now->minute % 20;
                 return Carbon::parse($hour.":".$minute);
             case 1800:
                 $minute = $now->minute - $now->minute % 30;

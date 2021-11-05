@@ -25,7 +25,7 @@ class Kernel extends ConsoleKernel
      */
     protected function schedule(Schedule $schedule)
     {
-         $schedule->command('command:handle-user-win-attendance-session')->everyMinute();
+         $schedule->command('command:handle-user-win-attendance-session')->everyMinute()->withoutOverlapping();
          $schedule->command('command:handle-bot-attendance-session')->everyMinute();
 
     }
