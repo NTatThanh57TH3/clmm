@@ -3,6 +3,7 @@
   <component name="SshConfigs">
     <configs>
       <sshConfig authType="PASSWORD" host="212.16.185.37" id="022e404e-230a-4803-ba41-3f03cc063ad8" port="22" nameFormat="DESCRIPTIVE" username="vkhqacbu" />
+      <sshConfig authType="PASSWORD" host="202.92.4.92" id="5f659d37-a363-4b87-94e8-10d66701ca57" port="22" nameFormat="DESCRIPTIVE" username="fchargpphosting" />
     </configs>
   </component>
 </project>
