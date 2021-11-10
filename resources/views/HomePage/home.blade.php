@@ -117,6 +117,7 @@
                 selection_rate = button.attr('server-rate');
 
                 $('.turn').removeClass('active');
+                console.log(`.turn[turn-tab=${id}]`)
                 $(`.turn[turn-tab=${id}]`).addClass('active');
 
                 $('button[server-action=change]').attr('class', 'btn btn-default');
@@ -485,10 +486,9 @@
 
                                 </div>
 
-                                <div class="panel-body turn" turn-tab="1000" style="padding-top: 0px;">
+                                <div class="panel-body turn" turn-tab="1" style="padding-top: 0px;">
                                     Cách chơi vô cùng đơn giản : <br>
-                                    - Chuyển tiền vào một trong các tài khoản :
-                                    <div class="table-responsive">
+                                    - Chuyển tiền vào một trong các tài khoản : <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover text-center">
                                             <thead>
                                             <tr role="row" class="bg-primary2">
@@ -503,24 +503,24 @@
                                             @php
                                                 $dem = 0;
                                             @endphp
-                                            @foreach($Setting_ChanLe['sdt2'] as $row)
+                                            @foreach($Setting_ChanLe2['sdt2'] as $row)
                                                 <tr>
-                                                    <td id="p_27"><b id="ducnghia_27">{{ $row }}</b> <span
+                                                    <td id="p_28"><b id="ducnghia_28">{{ $row }}</b> <span
                                                                 class="label label-success text-uppercase" onclick="coppy('{{ $row }}')"><i
-                                                                    class="fa fa-clipboard" aria-hidden="true"></i></span></td>
-                                                    <td>{{ number_format($Setting_ChanLe['min']) }} VNĐ</td>
-                                                    <td>{{ number_format($Setting_ChanLe['max']) }} VNĐ</td>
+                                                                    class="fa fa-clipboard" aria-hidden="true"></i></span> </td>
+                                                    <td>{{ number_format($Setting_ChanLe2['min']) }} VNĐ </td>
+                                                    <td>{{ number_format($Setting_ChanLe2['max']) }} VNĐ</td>
 
-                                                    @php
-                                                        $dem ++;
-                                                    @endphp
                                                 </tr>
+                                                @php
+                                                    $dem ++;
+                                                @endphp
                                             @endforeach
                                             </tbody>
                                         </table>
-                                    </div>
-                                    <br>
-                                    - Nội dung chuyển : <b>C</b> hoặc <b>L</b> (nếu đuôi mã giao dịch có các số sau) <br>
+                                    </div> <br>
+                                    - Nội dung chuyển : <b>C2</b> hoặc <b>L2</b> (nếu đuôi mã giao dịch có các số sau) <br>
+
                                     <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover text-center">
                                             <thead>
@@ -535,23 +535,28 @@
                                                    class="">
 
                                             <tr>
-                                                <td><b>L</b></td>
-                                                <td><code>1</code> - <code>3</code> - <code>5</code> - <code>7</code></td>
-                                                <td><b>x{{ $Setting_ChanLe['tile'] }} tiền cược</b></td>
+                                                <td><b>L2</b></td>
+                                                <td> <code>1</code> - <code>3</code> - <code>5</code> - <code>7</code> -
+                                                    <code>9</code></td>
+                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
                                             </tr>
                                             <tr>
-                                                <td><b>C</b></td>
-                                                <td><code>2</code> - <code>4</code> - <code>6</code> - <code>8</code></td>
-                                                <td><b>x{{ $Setting_ChanLe['tile'] }} tiền cược</b></td>
+                                                <td><b>C2</b></td>
+                                                <td><code>0</code> -<code>2</code> - <code>4</code> - <code>6</code> -
+                                                    <code>8</code></td>
+                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
                                             </tr>
 
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    - Tiền thắng sẽ = <b>Tiền cược*{{ $Setting_ChanLe['tile'] }}</b> <br>
+                                    - Tiền thắng sẽ = <b>Tiền cược*{{ $Setting_ChanLe2['tile'] }}</b> <br>
+                                    - tiền cược tối đa chơi <b>Chẵn lẻ 2</b> là <b>{{ number_format($Setting_ChanLe2['max']) }}</b> VND
+                                    <br>
                                     <b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ không được
                                         hoàn tiền.</b>
+
 
 
                                 </div>

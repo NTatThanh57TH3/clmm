@@ -6,13 +6,15 @@
             }
         });
         @if($canAttendance)
+        timelast = Number('{{ $secondRealTime }}');
         setTimeSessionAttendance();
         @endif
     });
 
-    function socket() {
+    function socket(timelast) {
         $.ajax({
             url: '{{ route('home.attendance.realtime') }}',
+            data:{time: timelast},
             type: 'post',
             success: function (data) {
                 let result = JSON.parse(data);
@@ -22,12 +24,16 @@
                 $('#muc_users').html(result.phones_attendance);
                 $('#mayman_log').html(result.view_list_session_past);
                 $("#diemdanh_tongtien").html(result.total_amount);
+                if (timelast%10 == 0){
+                    $("#thoigian_head").html(result.second_realtime);
+                    delete window.timelast;
+                    window.timelast = Number(result.second_realtime);
+                }
             }, error: function (data) {
             }
         })
     }
 
-    var timelast = Number('{{ $secondRealTime }}');
 
     function setTimeSessionAttendance() {
         setInterval(function () {
@@ -39,7 +45,7 @@
             $("#thoigian_head").html(timelast);
             $("#diemdanh_thoigian").html(timelast);
             if (timelast%2 == 0)
-                socket();
+                socket(timelast);
         }, 1000);
     }
     function getRndInteger(min,max){return Math.floor(Math.random()*(max-min))+min;}

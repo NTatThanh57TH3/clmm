@@ -56,7 +56,7 @@
                         <label>Thời gian mỗi phiên điểm danh(giây): </label>
                         <select class="form-control" name="time_each">
                             @foreach($configTimeEach as $time)
-                                <option value="{{ $time }}" {{ $time == $settingDiemdanh->time_each ? "selected" : "" }}>{{ $time }} giây</option>
+                                <option value="{{ $time }}" {{ $time == $settingDiemdanh->time_each ? "selected" : "" }}>{{ $time >= 86400 ? $time/86400 : ($time >= 3600 ? $time/3600 : $time/60) }}  {{ $time >=86400 ? "ngày":($time >= 3600 ? "tiếng" : "phút") }}</option>
                             @endforeach
                         </select>
                         {{--                        <input class="form-control" name="time_each" value="{{ $settingDiemdanh->time_each }}">--}}
