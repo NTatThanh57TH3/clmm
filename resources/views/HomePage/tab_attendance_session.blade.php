@@ -12,12 +12,12 @@
                     <small><i class="fa fa-usd" aria-hidden="true"></i> Giá trị: <font color="Maroon"><b
                                     id="">{{ number_format($setting['money_min']) }} ~ {{ number_format($setting['money_max']) }}</b> vnđ</font></small><br>
 
-                    <small><i class="fa fa-user" aria-hidden="true"></i>: <font color="333366"><b
+                    <small><i class="fa fa  -user" aria-hidden="true"></i>: <font color="333366"><b
                                     id="diemdanh_users" class="diemdanh_users">{{ $countUsersAttendance }}</b> người</font></small><br>
 
                     <small><i class="fa fa-clock-o" aria-hidden="true"></i> Quay thưởng sau: <font
                                 color="660000"><b
-                                    id="diemdanh_thoigian">{{ $canAttendance ? $secondRealTime : TIME_EACH_ATTENDANCE_SESSION }}</b>
+                                    id="diemdanh_thoigian">{{ $canAttendance ? $secondRealTime : $timeEach }}</b>
                             giây</font></small><br>
                     <small><i class="fa fa-star" aria-hidden="true"></i> Thắng phiên trước: <font
                                 color="333300"><b id="diemdanh_last">{{$phoneWinLatest}}</b></font></small><br>
@@ -48,12 +48,17 @@
                         Danh sách
                     </button>
                 </div>
+                <?php
+                $time = (int) $timeEach;
+                $startTime = $setting['start_time'];
+                $endTime = $setting['end_time'];
+                ?>
                 <div class="occho" id="muc_huongdan">
-                    - Mỗi phiên quà các bạn có 10 phút để điểm danh. <br>
+                    - Mỗi phiên quà các bạn có {{ $time >= 86400 ? $time/86400 : ($time >= 3600 ? $time/3600 : $time/60) }}  {{ $time >=86400 ? "ngày":($time >= 3600 ? "tiếng" : "phút") }} để điểm danh. <br>
                     - Số điện thoại điểm danh phải chơi Clmm.Me ít nhất 1 lần trong ngày. Không giới hạn số
                     lần điểm danh trong ngày. <br>
                     - Khi hết thời gian, người may mắn sẽ nhận được số tiền của phiên đó. <br>
-                    - Game chỉ hoạt động từ <b>7h sáng</b> đến 11h tối
+                    - Game chỉ hoạt động từ <b>{{ \Carbon\Carbon::parse($startTime)->format('H:i') }} sáng</b> đến {{ \Carbon\Carbon::parse($endTime)->format('H:i') }} tối
                 </div>
 
                 <div class="occho" id="muc_lichsu" style="display:none;">

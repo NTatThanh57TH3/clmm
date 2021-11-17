@@ -269,14 +269,14 @@ class HomeController extends Controller
         $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($attendanceSessionCurrent);
         $totalAmount              = $this->attendanceSessionRepository->getTotalAmountAttendanceSession();
         $countUsersAttendance     = count($usersAttendance);
-        $startTime                = Carbon::parse(TIME_START_ATTENDANCE);
-        $endTime                  = Carbon::parse(TIME_END_ATTENDANCE);
-        $now                      = Carbon::now();
-        $canAttendance            = $now->between($startTime, $endTime);
         $listUserAttendance       = $usersAttendance->take(10);
         $checkCanAttendance       = $this->attendanceSessionRepository->checkTurOnAttendance();
         $setting                  = $this->attendanceSessionRepository->getAttendanceSetting();
-        $timeEach                 = $setting['time_each'];
+        $timeEach                 = $setting['time_each'] ?? TIME_EACH_ATTENDANCE_SESSION;
+        $startTime                = isset($setting['start_time']) ? Carbon::parse($setting['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
+        $endTime                  = isset($setting['end_time']) ? Carbon::parse($setting['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
+        $now                      = Carbon::now();
+        $canAttendance            = $now->between($startTime, $endTime) && $checkCanAttendance;
 
         //View
         return view(

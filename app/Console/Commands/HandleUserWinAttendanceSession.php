@@ -11,6 +11,7 @@ use App\Traits\PhoneNumber;
 use Carbon\Carbon;
 use Illuminate\Console\Command;
 use Illuminate\Queue\Listener;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
@@ -60,15 +61,18 @@ class HandleUserWinAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
+        Log::info(Carbon::now()->toDateTimeString());
         try {
             $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
             if ($isTurnOn) {
                 $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
                 $timeRun        = $realtimeSecond;
-                for ($i = 0; $i <= $timeRun; $i++) {
+                Log::info("Time run:" .$timeRun);
+                for ($i = 0; $i < $timeRun; $i++) {
                     $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
+                    Log::info("Realtime: ".$realtimeSecond);
                     var_dump($realtimeSecond);
-                    if ($realtimeSecond > 1) {
+                    if ($realtimeSecond > 0) {
                         sleep(1);
                         //                        $realtimeSecond--;
                         continue;
@@ -105,11 +109,13 @@ class HandleUserWinAttendanceSession extends Command
                                 'amount'    => $amount,
                                 'bill_code' => $billCode,
                             ]);
+                            Log::warning($i);
+                            break;
                         }
-                        break;
                     }
                 }
             }
+            Log::info("DONE!!!");
             var_dump("Xu ly xong luc: ".Carbon::now()->toTimeString());
             return Command::SUCCESS;
         } catch (\Throwable $throwable) {

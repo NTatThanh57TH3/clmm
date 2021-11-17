@@ -9,13 +9,6 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
-      <webServer id="18f68490-f0fa-40e4-9c6c-3b84d64dce2c" name="LIVE">
-        <fileTransfer accessType="SFTP" host="202.92.4.92" port="22" sshConfigId="5f659d37-a363-4b87-94e8-10d66701ca57" sshConfig="fchargpphosting@202.92.4.92:22 password">
-          <advancedOptions>
-            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
-          </advancedOptions>
-        </fileTransfer>
-      </webServer>
     </option>
   </component>
 </project>
