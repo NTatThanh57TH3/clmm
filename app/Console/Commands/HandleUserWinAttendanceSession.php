@@ -61,18 +61,18 @@ class HandleUserWinAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        Log::info(Carbon::now()->toDateTimeString());
+        Log::info("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
         try {
             $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
             if ($isTurnOn) {
                 $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
                 $timeRun        = $realtimeSecond;
                 Log::info("Time run:" .$timeRun);
-                for ($i = 0; $i < $timeRun; $i++) {
+                for ($i = 0; $i <= $timeRun; $i++) {
                     $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
                     Log::info("Realtime: ".$realtimeSecond);
                     var_dump($realtimeSecond);
-                    if ($realtimeSecond > 0) {
+                    if ($realtimeSecond > 1) {
                         sleep(1);
                         //                        $realtimeSecond--;
                         continue;
@@ -188,6 +188,7 @@ class HandleUserWinAttendanceSession extends Command
         $phoneBots            = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
+        Log::info("count phone bots ".count($phoneBotsWin));
         if (count($phoneBotsWin) > 0) {
             $phoneBotWin = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
         } else {

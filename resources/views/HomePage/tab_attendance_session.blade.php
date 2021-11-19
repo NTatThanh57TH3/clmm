@@ -12,7 +12,7 @@
                     <small><i class="fa fa-usd" aria-hidden="true"></i> Giá trị: <font color="Maroon"><b
                                     id="">{{ number_format($setting['money_min']) }} ~ {{ number_format($setting['money_max']) }}</b> vnđ</font></small><br>
 
-                    <small><i class="fa fa  -user" aria-hidden="true"></i>: <font color="333366"><b
+                    <small><i class="fa fa-user" aria-hidden="true"></i>: <font color="333366"><b
                                     id="diemdanh_users" class="diemdanh_users">{{ $countUsersAttendance }}</b> người</font></small><br>
 
                     <small><i class="fa fa-clock-o" aria-hidden="true"></i> Quay thưởng sau: <font

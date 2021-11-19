@@ -143,7 +143,7 @@ class AttendanceSessionRepository extends Repository
         //        }
         $phones = collect(DB::table('attendance_session_bots')->select('phone')->get());
         $phones = $phones->pluck('phone')->toArray();
-        //        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
+        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
     }
 

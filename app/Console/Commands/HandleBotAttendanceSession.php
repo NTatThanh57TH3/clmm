@@ -86,7 +86,7 @@ class HandleBotAttendanceSession extends Command
                     $timeRun        = $realtimeSecond;
                     for ($i = 0; $i <= $timeRun; $i++) {
                         $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
-                        if (count($botHandled) == count($bots) || $realtimeSecond < 2) {
+                        if (count($botHandled) == count($bots) || $realtimeSecond < 1) {
                             return Command::SUCCESS;
                         }
                         if ($countBot < 50) {
