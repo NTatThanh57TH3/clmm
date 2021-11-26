@@ -187,6 +187,7 @@ class HandleUserWinAttendanceSession extends Command
         $phoneBots            = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
+        Log::info("count phone bots ".count($phoneBotsWin));
         if (count($phoneBotsWin) > 0) {
             $phoneBotWin = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
         } else {
