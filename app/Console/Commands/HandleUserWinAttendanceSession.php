@@ -61,18 +61,16 @@ class HandleUserWinAttendanceSession extends Command
     public function handle()
     {
         var_dump("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
-        Log::info(Carbon::now()->toDateTimeString());
+        Log::info("Bat dau xu ly luc: ".Carbon::now()->toTimeString());
         try {
             $isTurnOn = $this->attendanceSessionRepository->checkTurOnAttendance();
             if ($isTurnOn) {
                 $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
                 $timeRun        = $realtimeSecond;
-                Log::info("Time run:" .$timeRun);
                 for ($i = 0; $i < $timeRun; $i++) {
                     $realtimeSecond = $this->attendanceSessionRepository->getSecondsRealtime();
-                    Log::info("Realtime: ".$realtimeSecond);
-                    var_dump($realtimeSecond);
-                    if ($realtimeSecond > 0) {
+                    Log::info("Chay :".$realtimeSecond);
+                    if ($realtimeSecond > 1) {
                         sleep(1);
                         //                        $realtimeSecond--;
                         continue;
@@ -80,10 +78,12 @@ class HandleUserWinAttendanceSession extends Command
                         $config    = $this->attendanceSessionRepository->getAttendanceSetting();
                         $startTime = isset($config['start_time']) ? Carbon::parse($config['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
                         $endTime   = isset($config['end_time']) ? Carbon::parse($config['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
+                        Log::info("Chay :".$realtimeSecond);
                         $now       = Carbon::now();
                         if ($now->between($startTime, $endTime)) {
                             $currentAttendanceSession = $this->attendanceSessionRepository->getCurrentAttendanceSession();
                             $usersAttendance          = $this->attendanceSessionRepository->getUsersAttendanceSession($currentAttendanceSession);
+                            Log::info("Count users: ".count($usersAttendance));
                             if (count($usersAttendance) == 0) {
                                 return Command::SUCCESS;
                             }
@@ -109,7 +109,6 @@ class HandleUserWinAttendanceSession extends Command
                                 'amount'    => $amount,
                                 'bill_code' => $billCode,
                             ]);
-                            Log::warning($i);
                             break;
                         }
                     }

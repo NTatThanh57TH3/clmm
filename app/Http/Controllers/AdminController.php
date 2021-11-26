@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AttendanceSessionRepository;
 use App\Models\AttendanceSetting;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -955,6 +956,8 @@ class AdminController extends Controller
             AttendanceSetting::first()->update(\request()->all());
         }
         Cache::forget('cache_attendance_setting');
+        $attendanceRepo = new AttendanceSessionRepository();
+        $attendanceRepo->forgetCacheDatAttendanceSession();
         return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
     }
 

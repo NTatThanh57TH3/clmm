@@ -16,6 +16,13 @@
           </mappings>
         </serverdata>
       </paths>
+      <paths name="LIVE_CLMM">
+        <serverdata>
+          <mappings>
+            <mapping deploy="/domains/autocltxmomo.club/public_html" local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
     </serverData>
   </component>
 </project>

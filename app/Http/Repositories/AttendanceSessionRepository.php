@@ -79,6 +79,7 @@ class AttendanceSessionRepository extends Repository
     public function getDataAttendanceSession()
     {
         $cache = Cache::get('cache_data_attendance_session');
+        $cache = null;
         if (!is_null($cache)) {
             return $cache;
         }
@@ -137,13 +138,13 @@ class AttendanceSessionRepository extends Repository
 
     public function getPhoneAttendanceSessionBots()
     {
-        //        $cache = Cache::get('cache_phone_attendance_session_bots');
-        //        if (!is_null($cache)) {
-        //            return $cache;
-        //        }
+        $cache = Cache::get('cache_phone_attendance_session_bots');
+        if (!is_null($cache)) {
+            return $cache;
+        }
         $phones = collect(DB::table('attendance_session_bots')->select('phone')->get());
         $phones = $phones->pluck('phone')->toArray();
-        //        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
+        Cache::put('cache_phone_attendance_session_bots', $phones, Carbon::now()->addDay());
         return $phones;
     }
 
@@ -191,9 +192,7 @@ class AttendanceSessionRepository extends Repository
             ->get();
         if (count($records) == 0) {
             return [
-                'current'          => AttendanceSession::create([
-                    'date' => Carbon::today()->toDateString(),
-                ]),
+                'current'          => AttendanceSession::create(['date' => Carbon::today()->toDateString()]),
                 'phone_win_latest' => "*",
                 'sessions_past'    => collect(),
             ];
