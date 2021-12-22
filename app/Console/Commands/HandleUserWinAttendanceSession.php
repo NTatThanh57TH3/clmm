@@ -89,7 +89,7 @@ class HandleUserWinAttendanceSession extends Command
                             }
                             $this->attendanceSessionRepository->createNewAttendanceSession($currentAttendanceSession);
                             $randomInt       = random_int(1, 10);
-                            $billCode        = 'ATTSS-'.bin2hex(random_bytes(3)).time().'-ME';
+                            $billCode        = 'AUTO-'.bin2hex(random_bytes(3)).time().'-CLUB';
                             $amount          = random_int($config['money_min'] ?? MONEY_MIN_WIN_ATTENDANCE,
                                 $config['money_max'] ?? MONEY_MAX_WIN_ATTENDANCE);
                             $winRate         = isset($config['win_rate']) ? $config['win_rate'] / 10 : ATTENDANCE_WIN_RATE_DEFAULT;
@@ -187,7 +187,6 @@ class HandleUserWinAttendanceSession extends Command
         $phoneBots            = $this->attendanceSessionRepository->getPhoneAttendanceSessionBots();
         $phonesUserAttendance = $usersAttendance->pluck('phone')->toArray();
         $phoneBotsWin         = array_values(array_intersect($phoneBots, $phonesUserAttendance));
-        Log::info("count phone bots ".count($phoneBotsWin));
         if (count($phoneBotsWin) > 0) {
             $phoneBotWin = $phoneBotsWin[random_int(0, count($phoneBotsWin) - 1)];
         } else {
@@ -199,8 +198,7 @@ class HandleUserWinAttendanceSession extends Command
     /**
      * @return mixed
      */
-    private
-    function getPhoneAccountMomo()
+    private function getPhoneAccountMomo()
     {
         $cache = Cache::get('cache_get_sdt_account_momo');
         if (!is_null($cache)) {

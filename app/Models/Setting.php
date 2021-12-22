@@ -29,6 +29,7 @@ class Setting extends Model
         'on_1phan3',
         'on_nohu',
         'on_trathuongtuan',
-        'on_diemdanh'
+        'on_diemdanh',
+        'on_diemdanh_ngay'
     ];
 }

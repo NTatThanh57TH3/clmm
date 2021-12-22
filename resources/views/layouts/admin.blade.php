@@ -8,6 +8,7 @@
     <title>{{ $GetSetting->title }} | {{ $GetSetting->namepage }}</title>
     <meta name="description" content="{{ $GetSetting->description }}" />
     <meta property="og:url" content="{{ url()->current() }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta property="og:type" content="article">
     <meta property="og:title" content="{{ $GetSetting->description }}">
     <meta property="og:description" content="{{ $GetSetting->description }}">
@@ -44,6 +45,7 @@
     @yield('content')
     @include('layouts.elements.footer_admin')
 </div>
+
 <!--/Footer-->
 <!-- jQuery 3 -->
 <script src="{{ asset('/js/jquery.min.js') }}"></script>
@@ -67,6 +69,15 @@
 <!-- AdminLTE for demo purposes -->
 <script src="{{ asset('/js/demo.js') }}"></script>
 <script src="{{ asset('/js/sweetalert.min.js') }}"></script>
+<script type="text/javascript">
+    $.ajaxSetup({
+        headers: {
+            'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
+            'Cache-Control': 'no-cache',
+            'Pragma': 'no-cache'
+        }
+    });
+</script>
 @yield('script')
 </body>
 </html>

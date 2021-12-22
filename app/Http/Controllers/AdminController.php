@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
+use App\Models\AttendanceDateSetting;
 use App\Models\AttendanceSetting;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -959,6 +961,47 @@ class AdminController extends Controller
         $attendanceRepo = new AttendanceSessionRepository();
         $attendanceRepo->forgetCacheDatAttendanceSession();
         return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
+    }
+
+    public function SettingAttendanceDate()
+    {
+        $Setting              = new Setting;
+        $GetSetting           = $Setting->first();
+        $GetSetting->namepage = 'Cấu hình điểm danh ngày';
+        $GetSetting->action   = 'admin_setting_diemdanh_ngay_action';
+        $attendanceRepo       = new AttendanceDateRepository();
+        $settings             = $attendanceRepo->getMocchoi();
+        return view('AdminPage.setting_diemdanh_ngay', compact('GetSetting', 'settings'));
+    }
+
+    public function SettingAttendanceDateAdd()
+    {
+        $data = \request()->all();
+        if (!isset($data['mocchoi']) || !isset($data['mocchoi'])) {
+            return ['status' => 2, 'message' => 'Thiếu dữ liệu gửi lên'];
+        }
+        AttendanceDateSetting::create($data);
+        if (isset($data['finish']) && $data['finish'] = 1) {
+            return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
+        }
+        return 1;
+    }
+
+    public function SettingAttendanceDateDelete()
+    {
+        $settingDiemdanh = AttendanceDateSetting::find(request()->setting_id);
+        if (!is_null($settingDiemdanh)) {
+            $settingDiemdanh->delete();
+        }
+        return request()->setting_id;
+    }
+    public function SettingAttendanceDateUpdate()
+    {
+        $settingDiemdanh = AttendanceDateSetting::find(request()->setting_id);
+        if (!is_null($settingDiemdanh)) {
+            $settingDiemdanh->update(\request()->all());
+        }
+        return request()->setting_id;
     }
 
     public function DoiMatKhau(request $request)

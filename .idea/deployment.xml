@@ -9,17 +9,17 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="LIVE">
+      <paths name="LIVE_CLMM">
         <serverdata>
           <mappings>
             <mapping deploy="/domains/autocltxmomo.club/public_html" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
-      <paths name="LIVE_CLMM">
+      <paths name="VIPMOMO">
         <serverdata>
           <mappings>
-            <mapping deploy="/domains/autocltxmomo.club/public_html" local="$PROJECT_DIR$" web="/" />
+            <mapping deploy="/public_html" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>
       </paths>
