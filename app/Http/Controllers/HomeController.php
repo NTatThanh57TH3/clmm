@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -14,6 +15,7 @@ use App\Models\X1Phan3;
 use App\Models\AccountMomo;
 use App\Models\LichSuChoiMomo;
 use App\Models\SettingPhanThuongTop;
+use Illuminate\Http\Response;
 use Illuminate\Support\Carbon;
 use App\Models\NoHuu;
 use App\Models\LichSuChoiNoHu;
@@ -25,10 +27,12 @@ class HomeController extends Controller
 
     //index
     protected $attendanceSessionRepository;
+    protected $attendanceDateRepository;
 
     public function __construct()
     {
         $this->attendanceSessionRepository = new AttendanceSessionRepository();
+        $this->attendanceDateRepository    = new AttendanceDateRepository();
     }
 
     public function index()
@@ -86,7 +90,10 @@ class HomeController extends Controller
         $Setting_1Phan3 = $Setting_1Phan3->toArray();
 
         //Trạng thái MOMO
-        $ListAccount = $AccountMomo->get();
+        // $ListAccount = $AccountMomo->get();
+         $ListAccount = $AccountMomo->where([
+            'status' => 1,
+        ])->get();
 
         $ListAccounts   = [];
         $dem            = 0;
@@ -131,7 +138,9 @@ class HomeController extends Controller
 
         //Lịch sử chơi Momo
         $LichSuChoiMomo     = new LichSuChoiMomo;
-        $ListLichSuChoiMomo = collect();
+        $ListLichSuChoiMomo = $LichSuChoiMomo->where([
+            'ketqua' => 1,'status'=>3,
+        ])->orderBy('id', 'desc')->limit(5)->get();
         $LichSuGiaoDich     = [];
         $dem                = 0;
         foreach ($ListLichSuChoiMomo as $row) {
@@ -271,13 +280,14 @@ class HomeController extends Controller
         $countUsersAttendance     = count($usersAttendance);
         $listUserAttendance       = $usersAttendance->take(10);
         $checkCanAttendance       = $this->attendanceSessionRepository->checkTurOnAttendance();
+        $checkCanAttendanceDate   = $this->attendanceDateRepository->checkTurOnAttendanceDate();
         $setting                  = $this->attendanceSessionRepository->getAttendanceSetting();
         $timeEach                 = $setting['time_each'] ?? TIME_EACH_ATTENDANCE_SESSION;
         $startTime                = isset($setting['start_time']) ? Carbon::parse($setting['start_time']) : Carbon::parse(TIME_START_ATTENDANCE);
         $endTime                  = isset($setting['end_time']) ? Carbon::parse($setting['end_time']) : Carbon::parse(TIME_END_ATTENDANCE);
         $now                      = Carbon::now();
         $canAttendance            = $now->between($startTime, $endTime) && $checkCanAttendance;
-
+        $configAttendanceDate     = $this->attendanceDateRepository->getMocchoi();
         //View
         return view(
             'HomePage.home',
@@ -306,6 +316,8 @@ class HomeController extends Controller
                 'checkCanAttendance',
                 'setting',
                 'timeEach',
+                'checkCanAttendanceDate',
+                'configAttendanceDate',
             )
         );
     }
@@ -359,6 +371,19 @@ class HomeController extends Controller
         }
         $this->attendanceSessionRepository->insertUsersAttendanceSession($data);
         return "SUCCESS";
+    }
+
+    public function attendanceDate(Request $request)
+    {
+        $data = $request->all();
+        if (!isset($data['phone'])) {
+            return response(['status' => 2, 'message' => "Có lỗi xảy ra vui lòng thử lại"]);
+        }
+        if (!$this->attendanceDateRepository->checkTurOnAttendanceDate()) {
+            return response(['status' => 2, 'message' => "Hệ thống đang bảo trì"]);
+        }
+        $data = $this->attendanceDateRepository->handleAttendanceDate($data);
+        return $data;
     }
 
     private function checkPhoneHasAttendanceSessionCurrent($phone)

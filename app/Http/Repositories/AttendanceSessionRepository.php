@@ -173,6 +173,7 @@ class AttendanceSessionRepository extends Repository
     public function getSettingWebsite()
     {
         $cache = Cache::get('cache_website_setting');
+        $cache = null;
         if (!is_null($cache)) {
             return $cache;
         }

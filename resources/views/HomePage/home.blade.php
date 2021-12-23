@@ -15,6 +15,47 @@
         center.solid {
             border-style: solid;
         }
+        #button-diemdanh-ngay {
+            background-color: #004A7F;
+            border: none;
+            color: #FFFFFF;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 20px;
+            padding: 10px 10px;
+            text-align: center;
+            text-decoration: none;
+        }
+        @-webkit-keyframes glowing {
+            0% { background-color: #004A7F; -webkit-box-shadow: 0 0 3px #004A7F; }
+            50% { background-color: #0094FF; -webkit-box-shadow: 0 0 10px #0094FF; }
+            100% { background-color: #004A7F; -webkit-box-shadow: 0 0 3px #004A7F; }
+        }
+
+        @-moz-keyframes glowing {
+            0% { background-color: #004A7F; -moz-box-shadow: 0 0 3px #004A7F; }
+            50% { background-color: #0094FF; -moz-box-shadow: 0 0 10px #0094FF; }
+            100% { background-color: #004A7F; -moz-box-shadow: 0 0 3px #004A7F; }
+        }
+
+        @-o-keyframes glowing {
+            0% { background-color: #004A7F; box-shadow: 0 0 3px #004A7F; }
+            50% { background-color: #0094FF; box-shadow: 0 0 10px #0094FF; }
+            100% { background-color: #004A7F; box-shadow: 0 0 3px #004A7F; }
+        }
+
+        @keyframes glowing {
+            0% { background-color: #004A7F; box-shadow: 0 0 3px #004A7F; }
+            50% { background-color: #0094FF; box-shadow: 0 0 10px #0094FF; }
+            100% { background-color: #004A7F; box-shadow: 0 0 3px #004A7F; }
+        }
+
+        #button-diemdanh-ngay {
+            -webkit-animation: glowing 1500ms infinite;
+            -moz-animation: glowing 1500ms infinite;
+            -o-animation: glowing 1500ms infinite;
+            animation: glowing 1500ms infinite;
+        }
     </style>
 @endsection
 
@@ -151,6 +192,18 @@
         setInterval(function () {
             loadhu();
         }, 10000);
+    </script>
+    <script type="text/javascript">
+                      function myFunction() {
+                      document.getElementById("modal_thongbao").style.display='none';
+                    }
+                      function validateForm() {
+                      var magiaodich = $("#magiaodich").val();
+                    if (magiaodich === "") {
+                    alert("Chưa nhập mã giao dịch");
+                return false;
+        }
+    }
     </script>
     @include('HomePage.script')
 
@@ -291,7 +344,7 @@
 
                             @if($GetSetting->on_chanle2 == 1)
                                 <button class="btn btn-default" server-action="change" server-id="1" server-rate="1">
-                                    Chẵn Lẻ 2
+                                    Chẵn Lẻ Tài Xỉu 2
                                 </button>
                             @endif
 
@@ -314,28 +367,44 @@
                             @endif
                         </div>
                     </div>
-                    <center class="mt-2">
-                        <br>
-                        @if(isset($checkCanAttendance) && $checkCanAttendance)
-                            <button style="display:block" class="btn btn-default" server-action="change" server-id="010000"
-                                    server-rate="010000">
-                                Điểm danh +100k <br>
-                                <b style="
-                                        top: 33px;
-                                        /* left: 1%; */
-                                        /* margin: auto; */
-                                        margin-left: auto;
-                                        margin-right: auto;
-                                        left: 0;
-                                        right: 0;
-                                        text-align: center;
-                                        font-size: 9px;"><font color="green"><i class="fa fa-clock-o" aria-hidden="true"></i>
-                                        <b id="thoigian_head">{{ $canAttendance ? $secondRealTime : $timeEach }}</b></font>
-                                    <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
-                                        <b id="users_head" class="diemdanh_users">{{ $countUsersAttendance }}</b></font></b>
-                            </button>
-                        @endif
-                    </center>
+                    <div class="text-center mt-5">
+                        <div class="btn-group btn-group-lg" role="group" aria-label="...">
+                            @if(isset($checkCanAttendance) && $checkCanAttendance)
+                                <button style="display:block; padding-bottom: 20px" class="btn btn-default" server-action="change"
+                                        server-id="010000"
+                                        server-rate="010000">
+                                    Điểm danh +100k <br>
+                                    <b style="
+                                            top: 33px; position: absolute;
+                                            /* margin: auto; */
+                                            margin-left: auto;
+                                            margin-right: auto;
+                                            left: 0;
+                                            right: 0;
+                                            text-align: center;
+                                            font-size: 9px;"><font color="green"><i class="fa fa-clock-o" aria-hidden="true"></i>
+                                            <b id="thoigian_head">{{ $canAttendance ? $secondRealTime : $timeEach }}</b></font>
+                                        <font color="6861b1"><i class="fa fa-users" aria-hidden="true"></i>
+                                            <b id="users_head" class="diemdanh_users">{{ $countUsersAttendance }}</b></font></b>
+                                </button>
+                            @endif
+                            @if(isset($checkCanAttendanceDate) && $checkCanAttendanceDate)
+                                <button style="display:block;padding-bottom: 20px" class="btn btn-default " id="button-diemdanh-ngay" server-action="change"
+                                        server-id="456456"
+                                        server-rate="456456">
+                                    Nhiệm Vụ Ngày
+                                    <b style="
+                                    top: 33px; position: absolute;
+                                    margin-left: auto;
+                                    margin-right: auto;
+                                    left: 0;
+                                    right: 0;
+                                    text-align: center;
+                                    font-size: 9px;"><font color="red">(New)</font></b>
+                                </button>
+                            @endif
+                        </div>
+                    </div>
 
                     <div class="row justify-content-md-center box-cl">
 
@@ -414,7 +483,100 @@
 
 
                                 </div>
+                                <div class="panel-body turn active" turn-tab="456456" style="padding-top: 0px;">
 
+                                    <style>
+                                        #QuaTang {
+                                            margin-top: 0.5rem;
+                                            color: #155724;
+                                            background-color: #d4edda;
+                                            border-color: #c3e6cb;
+                                        }
+
+                                        #osdt {
+                                            margin-top: 0.5rem;
+                                            color: #155724;
+                                            background-color: #9cbca4;
+                                            border-color: #c3e6cb;
+                                            padding: 20px;
+                                        }
+
+                                        .occho {
+                                            margin-top: 0.5rem;
+                                            color: #155724;
+                                            background-color: #aed6b8;
+                                            border-color: #c3e6cb;
+                                            padding: 20px;
+                                        }
+
+                                        #othuong {
+                                            margin-top: 0.5rem;
+                                            color: #155724;
+                                            background-color: #9cbca4;
+                                            border-color: #c3e6cb;
+                                            padding: 20px;
+                                        }
+                                    </style>
+
+                                    <div class="row collapse show" id="QuaTang" style="">
+                                        <div class="col-lg-12">
+                                            <div class="body">
+                                                <div class="text-center">
+
+                                                    <font color="blue"><big><b>Nhiệm Vụ Ngày</b></big></font>
+                                                    <br>
+
+
+                                                    <div class="form-group occard" id="osdt">
+                                                        <label for="exampleInputEmail1">Số điện thoại:</label>
+                                                        <input type="text" class="form-control" id="PhoneDiemDanhNgay" aria-describedby="emailHelp"
+                                                               placeholder="03837755">
+                                                        <small id="emailHelp" class="form-text text-muted">Nhập số điện thoại của bạn để
+                                                            điểm danh.</small>
+                                                        <br>
+                                                        <button class="btn btn-success" data-toggle="modal" data-target="#modalDiemDanh"
+                                                                onclick="diemDanhNgay()">Kiểm Tra
+                                                        </button>
+                                                    </div>
+
+                                                    <div class="form-group occard" id="othuong" style="display:none;">
+
+                                                    </div>
+
+
+                                                </div>
+                                                <div class="occho" id="fghdh">
+                                                    - Thật tuyệt vời ! Mỗi ngày chỉ cần chơi trên {{ env('APP_NAME') }} chắc chắn bạn sẽ nhận được tiền.
+                                                    <br>
+                                                    - Khi chơi đủ số tiền (ko cần biết thắng thua) chắc chắn sẽ nhận được tiền. <br>
+                                                    - Hãy nhập số điện thoại của bạn vào mục bên trên để kiểm tra đã chơi bao nhiêu nhé.
+                                                    <br>
+                                                    - Khi chơi đủ mốc tiền, các bạn ấn vào nhận thưởng để nhận được các mốc như sau:
+
+                                                    <div class="table-responsive">
+                                                        <table class="table table-striped table-bordered table-hover text-center">
+                                                            <thead>
+                                                            <tr role="row" class="bg-primary">
+                                                                <th class="text-center text-white">Mốc chơi</th>
+                                                                <th class="text-center text-white">Thưởng</th>
+                                                            </tr>
+                                                            </thead>
+                                                            <tbody id="zzxc">
+                                                            @foreach($configAttendanceDate as $config)
+                                                                <tr>
+                                                                    <td>{{ number_format($config['mocchoi']) }}</td>
+                                                                    <td>+{{ number_format($config['tiennhan']) }}</td>
+                                                                </tr>
+                                                            @endforeach
+                                                            </tbody>
+                                                        </table>
+                                                    </div>
+
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                                 <div class="panel-body turn" turn-tab="1000" style="padding-top: 0px;">
                                     Cách chơi vô cùng đơn giản : <br>
                                     - Chuyển tiền vào một trong các tài khoản :
@@ -488,7 +650,8 @@
 
                                 <div class="panel-body turn" turn-tab="1" style="padding-top: 0px;">
                                     Cách chơi vô cùng đơn giản : <br>
-                                    - Chuyển tiền vào một trong các tài khoản : <div class="table-responsive">
+                                    - Chuyển tiền vào một trong các tài khoản :
+                                    <div class="table-responsive">
                                         <table class="table table-striped table-bordered table-hover text-center">
                                             <thead>
                                             <tr role="row" class="bg-primary2">
@@ -518,7 +681,8 @@
                                             @endforeach
                                             </tbody>
                                         </table>
-                                    </div> <br>
+                                    </div>
+                                    <br>
                                     - Nội dung chuyển : <b>C2</b> hoặc <b>L2</b> (nếu đuôi mã giao dịch có các số sau) <br>
 
                                     <div class="table-responsive">
@@ -546,6 +710,18 @@
                                                     <code>8</code></td>
                                                 <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
                                             </tr>
+                                            <tr>
+                                                    <td><b>X2</b></td>
+                                                    <td><code>0</code> -<code>1</code> - <code>2</code> - <code>3</code> -
+                                                        <code>4</code></td>
+                                                    <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                </tr>
+                                                <tr>
+                                                    <td><b>T2</b></td>
+                                                    <td><code>5</code> -<code>6</code> - <code>7</code> - <code>8</code> -
+                                                        <code>9</code></td>
+                                                    <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                </tr>
 
                                             </tbody>
                                         </table>
@@ -806,39 +982,89 @@
 
                             </div>
                         </div>
-
                         <div class="col-md-3 mt-3 text-center cl">
-                            <div class="panel panel-primary">
+                           <div class="panel panel-primary">
+								<div class="panel-heading text-center">
+								<div class="row">
+								<div class="col-xs-12">
+								💖 KIỂM TRA GIAO DỊCH 💖
+								</div>
+								</div>
+								</div>
+								<div class="panel-body">
+								<form method="POST" action="history.php" onsubmit="return validateForm()" required="">
+								<div class="form-group">
+								<label for="exampleInputEmail1">Nhập mã giao dịch</label>
+								<input type="number" name="magiaodich" class="form-control" id="magiaodich" aria-describedby="emailHelp" placeholder="Ví dụ 6996868686">
+								<small id="emailHelp" class="form-text text-muted">Nhập mã giao dịch của bạn để
+								kiểm tra.</small>
+								</div>
+								<center><button id="post_ls" type="submit" class="btn btn-primary">Kiểm tra</button></center>
+								</form>
+								<br>
+								<div class="panel panel-primary">
                                 <div class="panel-heading text-center">
                                     <div class="row">
                                         <div class="col-xs-12">
-                                            Lưu ý
+                                           💖 Lưu ý 💖
                                         </div>
 
                                     </div>
                                 </div>
-                                <div class="panel-body">
 
-                                    <div class="alert alert-danger">
+                            </div>
+								<div class="alert alert-danger">
                                         <p>Nội dung chuyển không phân biệt in hoa, thường.</p>
                                         <p><b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ
                                                 không được hoàn tiền.</b>
                                         </p>
-                                        <p>Nếu bạn chiến thắng, vui lòng chờ 1 - 2 phút hệ thống sẽ tự động chuyển tiền cho bạn.
+                                        <p>Nếu bạn chiến thắng, vui lòng chờ 2 - 5 Giây hệ thống sẽ tự động chuyển tiền cho bạn.
                                         </p>
 
 
                                     </div>
 
 
+
                                     <p><span class="label label-success text-uppercase">CSKH ZALO : <a
-                                                    class="text-white" href="{{ $GetSetting->zalo }}"
-                                                    target="_blank">{{ $GetSetting->zalo }}</a></span></p>
+                                                class="text-white" href="{{ $GetSetting->zalo }}"
+                                                target="_blank">{{ $GetSetting->zalo }}</a></span></p>
 
-
-                                </div>
-                            </div>
+								</div>
+						   </div>
                         </div>
+                        <!--<div class="col-md-3 mt-3 text-center cl">-->
+                        <!--    <div class="panel panel-primary">-->
+                        <!--        <div class="panel-heading text-center">-->
+                        <!--            <div class="row">-->
+                        <!--                <div class="col-xs-12">-->
+                        <!--                    Lưu ý-->
+                        <!--                </div>-->
+
+                        <!--            </div>-->
+                        <!--        </div>-->
+                        <!--        <div class="panel-body">-->
+
+                        <!--            <div class="alert alert-danger">-->
+                        <!--                <p>Nội dung chuyển không phân biệt in hoa, thường.</p>-->
+                        <!--                <p><b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ-->
+                        <!--                        không được hoàn tiền.</b>-->
+                        <!--                </p>-->
+                        <!--                <p>Nếu bạn chiến thắng, vui lòng chờ 1 - 2 phút hệ thống sẽ tự động chuyển tiền cho bạn.-->
+                        <!--                </p>-->
+
+
+                        <!--            </div>-->
+
+
+                        <!--            <p><span class="label label-success text-uppercase">CSKH ZALO : <a-->
+                        <!--                            class="text-white" href="{{ $GetSetting->zalo }}"-->
+                        <!--                            target="_blank">{{ $GetSetting->zalo }}</a></span></p>-->
+
+
+                        <!--        </div>-->
+                        <!--    </div>-->
+                        <!--</div>-->
                     </div>
 
                     <div class="mt-5">
@@ -914,8 +1140,8 @@
                                             <tr role="row" class="bg-primary2">
                                                 <th class="text-center text-white">Số điện thoại</th>
                                                 <th class="text-center text-white">Trạng thái</th>
-                                                <th class="text-center text-white">Thời gian</th>
-                                                <th class="text-center text-white">Giới hạn</th>
+                                                <!--<th class="text-center text-white">Thời gian</th>-->
+                                                <!--<th class="text-center text-white">Giới hạn</th>-->
                                                 <th class="text-center text-white">Số lần bank</th>
                                             </tr>
                                             </thead>
@@ -932,9 +1158,9 @@
                                                     <td>
                                                         <span class="label label-{{ $row->status_class }} text-uppercase">{{ $row->status_text }}</span>
                                                     </td>
-                                                    <td>{{ $row->created_at }}</td>
-                                                    <td> {{ number_format($row->limit1) }} / {{ number_format($row->limit2) }} VNĐ</td>
-                                                    <td>{{ number_format($row->countbank) }}</td>
+                                                    <!--<td>{{ $row->created_at }}</td>-->
+                                                    <!--<td> {{ number_format($row->limit1) }} / {{ number_format($row->limit2) }} VNĐ</td>-->
+                                                    <td>{{ number_format($row->countbank) }}/190</td>
                                                 </tr>
                                             @endforeach
 
