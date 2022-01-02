@@ -9,6 +9,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="126857cf-241e-4c2d-b1af-0bf8d75a45c8" name="VIPPMOMO" url="http://45.84.205.77">
+        <fileTransfer host="45.84.205.77" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>
