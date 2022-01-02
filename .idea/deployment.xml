@@ -9,7 +9,14 @@
           </mappings>
         </serverdata>
       </paths>
-      <paths name="VIPPMOMO">
+      <paths name="LIVE_CLMM">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
+      <paths name="VIPMOMO">
         <serverdata>
           <mappings>
             <mapping deploy="/public_html" local="$PROJECT_DIR$" web="/" />

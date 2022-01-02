@@ -101,7 +101,7 @@ class PhoneNumber
 //        ],
     ];
 
-    function convert($phonenumber)
+    function convert($phonenumber, $convertOld = false)
     {
         if (!empty($phonenumber)) {
             //1. Xóa ký tự trắng
@@ -139,7 +139,9 @@ class PhoneNumber
 
 
             if ($dathaythe == false) {
-                foreach ($this->arr_Prefix['CELL'] as $key => $value) {
+                $arrayPrefix  = $convertOld ? array_flip($this->arr_Prefix['CELL']) : $this->arr_Prefix['CELL'];
+                foreach ($arrayPrefix as $key => $value) {
+
                     //$prefixlen=strlen($key);
                     if (strpos($phonenumber, $key) === 0) {
                         $prefix      = $key;

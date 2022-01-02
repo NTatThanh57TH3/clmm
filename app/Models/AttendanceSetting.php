@@ -11,6 +11,7 @@ class AttendanceSetting extends Model
     protected $table ="attendance_settings";
     protected $fillable = [
         'win_rate',
+        'bot_rate',
         'start_time',
         'end_time',
         'money_min',

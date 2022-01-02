@@ -13,11 +13,18 @@ use App\Http\Controllers\AdminController;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
-Route::get('/', [HomeController::class, 'index'])->name('home');
-Route::post('/realtime-attendance', [HomeController::class, 'realTimeAttendance'])->name('home.attendance.realtime');
-Route::post('/attendance-session', [HomeController::class, 'attendanceSession'])->name('home.attendance_session');
-
+Route::group(['middleware' => 'maintenance_system'], function() {
+    Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::post('/realtime-attendance', [HomeController::class, 'realTimeAttendance'])
+        ->name('home.attendance.realtime');
+    Route::post('/attendance-session', [HomeController::class, 'attendanceSession'])->name('home.attendance_session');
+    Route::post('/attendance-date', [HomeController::class, 'attendanceDate'])->name('home.attendance_date');
+});
+Route::get('/bao-tri', function() {
+    $repo    = new \App\Http\Repositories\AttendanceSessionRepository();
+    $setting = $repo->getSettingWebsite();
+    return view('pages.maintenance_system', compact('setting'));
+})->name('bao_tri');
 Route::get('/admin/login', [AdminController::class, 'Login'])->name('login')->middleware('guest');
 Route::post('/admin/login-action', [AdminController::class, 'LoginAction'])->name('admin_login_action')->middleware('guest');
 
@@ -49,9 +56,18 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'],function(){
     Route::get('/setting/no-hu', [AdminController::class, 'SettingNoHu'])->name('admin_setting_nohu');
     Route::post('/setting/no-hu-action', [AdminController::class, 'SettingNoHuAction'])->name('admin_setting_nohu_action');
     Route::get('/setting/thuong-tuan', [AdminController::class, 'SettingThuongTuan'])->name('admin_setting_thuongtuan');
-    Route::post('/setting/thuong-tuan-action', [AdminController::class, 'SettingThuongTuanAction'])->name('admin_setting_thuongtuan_action');
+    Route::post('/setting/thuong-tuan-action', [AdminController::class, 'SettingThuongTuanAction'])
+        ->name('admin_setting_thuongtuan_action');
     Route::get('/setting/diem-danh', [AdminController::class, 'SettingAttendance'])->name('admin_setting_diemdanh');
-    Route::post('/setting/diem-danh-action', [AdminController::class, 'SettingAttendanceAction'])->name('admin_setting_diemdanh_action');
+    Route::post('/setting/diem-danh-action', [AdminController::class, 'SettingAttendanceAction'])
+        ->name('admin_setting_diemdanh_action');
+    Route::get('/setting/attendance-date', [AdminController::class, 'SettingAttendanceDate'])->name('admin_setting_attendance_date');
+    Route::post('/setting/attendance-date-add', [AdminController::class, 'SettingAttendanceDateAdd'])
+        ->name('admin_setting_attendance_date_add');
+    Route::post('/setting/attendance-date-update', [AdminController::class, 'SettingAttendanceDateUpdate'])
+        ->name('admin_setting_attendance_date_update');
+    Route::post('/setting/attendance-date-delete', [AdminController::class, 'SettingAttendanceDateDelete'])
+        ->name('admin_setting_attendance_date_delete');
     Route::get('/setting/doi-mat-khau', [AdminController::class, 'DoiMatKhau'])->name('admin_doi_mat_khau');
     Route::post('/setting/doi-mat-khau-action', [AdminController::class, 'DoiMatKhauAction'])->name('admin_doi_mat_khau_action');
     Route::get('/setting/update', [AdminController::class, 'Update'])->name('admin_update');

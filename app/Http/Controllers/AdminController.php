@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AttendanceDateRepository;
+use App\Http\Repositories\AttendanceSessionRepository;
+use App\Models\AttendanceDateSetting;
 use App\Models\AttendanceSetting;
 use Illuminate\Http\Request;
 use App\Models\Setting;
@@ -28,6 +31,7 @@ use App\Models\ConfigMessageMomo;
 use App\Models\User;
 use App\Models\WEB2M;
 use Illuminate\Support\Facades\Cache;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\URL;
@@ -396,7 +400,7 @@ class AdminController extends Controller
         $GetSetting = $Setting->first();
 
         $GetSetting->update($request->all());
-        Cache::forget('cache_attendance_setting');
+        Cache::forget('cache_website_setting');
         return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
     }
 
@@ -931,6 +935,7 @@ class AdminController extends Controller
         $GetSetting->namepage = 'Cấu hình điểm danh nhận quà';
         $GetSetting->action   = 'admin_setting_diemdanh_action';
         $settingDiemdanh      = AttendanceSetting::first();
+        $configTimeEach       = Config::get('attendance_session.time_each');
         if (is_null($settingDiemdanh)) {
             $settingDiemdanh = AttendanceSetting::create([
                 'win_rate'   => 10,
@@ -941,7 +946,7 @@ class AdminController extends Controller
                 'time_each'  => TIME_EACH_ATTENDANCE_SESSION,
             ]);
         }
-        return view('AdminPage.setting_diemdanh', compact('GetSetting', 'settingDiemdanh'));
+        return view('AdminPage.setting_diemdanh', compact('GetSetting', 'settingDiemdanh', 'configTimeEach'));
     }
 
     public function SettingAttendanceAction()
@@ -953,7 +958,50 @@ class AdminController extends Controller
             AttendanceSetting::first()->update(\request()->all());
         }
         Cache::forget('cache_attendance_setting');
+        $attendanceRepo = new AttendanceSessionRepository();
+        $attendanceRepo->forgetCacheDatAttendanceSession();
         return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
+    }
+
+    public function SettingAttendanceDate()
+    {
+        $Setting              = new Setting;
+        $GetSetting           = $Setting->first();
+        $GetSetting->namepage = 'Cấu hình điểm danh ngày';
+        $GetSetting->action   = 'admin_setting_diemdanh_ngay_action';
+        $attendanceRepo       = new AttendanceDateRepository();
+        $settings             = $attendanceRepo->getMocchoi();
+        return view('AdminPage.setting_diemdanh_ngay', compact('GetSetting', 'settings'));
+    }
+
+    public function SettingAttendanceDateAdd()
+    {
+        $data = \request()->all();
+        if (!isset($data['mocchoi']) || !isset($data['mocchoi'])) {
+            return ['status' => 2, 'message' => 'Thiếu dữ liệu gửi lên'];
+        }
+        AttendanceDateSetting::create($data);
+        if (isset($data['finish']) && $data['finish'] = 1) {
+            return redirect()->back()->with('status', 'success')->with('message', 'Lưu dữ liệu thành công');
+        }
+        return 1;
+    }
+
+    public function SettingAttendanceDateDelete()
+    {
+        $settingDiemdanh = AttendanceDateSetting::find(request()->setting_id);
+        if (!is_null($settingDiemdanh)) {
+            $settingDiemdanh->delete();
+        }
+        return request()->setting_id;
+    }
+    public function SettingAttendanceDateUpdate()
+    {
+        $settingDiemdanh = AttendanceDateSetting::find(request()->setting_id);
+        if (!is_null($settingDiemdanh)) {
+            $settingDiemdanh->update(\request()->all());
+        }
+        return request()->setting_id;
     }
 
     public function DoiMatKhau(request $request)
