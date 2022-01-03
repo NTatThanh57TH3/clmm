@@ -16,7 +16,7 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
-      <webServer id="ca26827a-cb67-4c44-bf01-5170f76b3efb" name="VIPMOMO" url="http://45.84.205.77">
+      <webServer id="4d4fe9cc-6315-45f1-98d9-a82e159bad52" name="VIPMOMO" url="http://45.84.205.77">
         <fileTransfer host="45.84.205.77" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
