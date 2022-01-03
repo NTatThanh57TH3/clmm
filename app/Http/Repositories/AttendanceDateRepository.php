@@ -1,7 +1,7 @@
 <?php
 /**
  *File name : AttendanceSessionRepository.php / Date: 10/26/2021 - 9:39 PM
- *Code Owner: Thanhnt/ Email: Thanhnt@omt.com.vn/ Phone: 0384428234
+
  */
 
 namespace App\Http\Repositories;
@@ -56,8 +56,11 @@ class AttendanceDateRepository extends Repository
         $phonesAccount      = AccountMomo::where('sdt', $phone)->orWhere('sdt', $phoneOld)->get();
         $date               = Carbon::today()->toDateString();
         $lichSuMomosOfPhone = LichSuChoiMomo::where('sdt', $phone)
-            ->orWhere('sdt', $phoneOld)
             ->where('created_at', '>=', $date)
+            ->orWhere(function($query) use ($phoneOld, $date) {
+                $query->where('sdt', $phoneOld)
+                    ->where('created_at', '>=', $date);
+            })
             ->get();
         if (count($lichSuMomosOfPhone) == 0 && count($phonesAccount) == 0) {
             return $this->responseResult("Oh !! Số điện thoại này chưa chơi game nào, hãy kiểm tra lại");
@@ -68,7 +71,6 @@ class AttendanceDateRepository extends Repository
             return $this->responseResult("Hệ thống đang bảo trì vui lòng thử lại sau!");
         }
         $sumTien = $lichSuMomosOfPhone->sum('tiencuoc');
-
         $lichsuChoi = $this->getLichSuChoiDiemDanhNgay($date, $phone, $phoneOld);
         if (count($lichsuChoi) == 0) {
             if ($sumTien < $mocchoiFirst['mocchoi']) {
@@ -80,22 +82,28 @@ class AttendanceDateRepository extends Repository
                 return $this->responseResult("Hệ thống đang bảo trì vui lòng thử lại sau!");
             }
             $tiennhan = $mocSumTien['tiennhan'];
-            $this->insertPhoneToTableLichSu($phone, $mocSumTien['mocchoi'], $tiennhan);
+            $this->insertPhoneToTableLichSu($phoneOld, $mocSumTien['mocchoi'], $tiennhan);
         } else {
             $mocDaChoiMax = array_key_last($lichsuChoi);
-            $mocTiepTheo = collect($mocchois)->where('mocchoi', ">", $mocDaChoiMax)->first();
-            if (is_null($mocTiepTheo)) {
+            $mocSumTien = collect($mocchois)->where('mocchoi', "<=", $sumTien)->last();
+//            $mocTiepTheo  = collect($mocchois)->where('mocchoi', ">", $mocDaChoiMax)->first();
+            if (is_null($mocSumTien) || $this->mocchoiIsMax(collect($mocchois)->last(), $mocDaChoiMax)) {
                 return $this->responseResult("Bạn đã nhận thưởng hết trong ngày hôm nay. Vui lòng quay lại trò chơi vào ngày mai!!!");
             }
-            $mocDatTiepTheo = $mocTiepTheo['mocchoi'];
+            if ($mocDaChoiMax)
+//            $mocSumTien['mocchoi'] == $mocDaChoiMax
+                $mocDatTiepTheo = $mocSumTien['mocchoi'];
+            if ($mocDaChoiMax == $mocDatTiepTheo){
+                return $this->responseResult("Oh !! . Nay bạn đã chơi hết: ".number_format($sumTien)." VNĐ. Bạn chưa đủ mốc tiền tiếp theo để nhận thưởng thêm trong hôm nay. Cố gắng Pang thêm nhé!!!");
+            }
             if ($sumTien >= $mocDatTiepTheo) {
-                $tiennhan = $mocTiepTheo['tiennhan'];
+                $tiennhan = $mocSumTien['tiennhan'];
                 $this->insertPhoneToTableLichSu($phoneOld, $mocDatTiepTheo, $tiennhan);
             } else {
-                return $this->responseResult("Oh !! . Nay bạn đã chơi hết: ".number_format($sumTien)." VNĐ. Bạn chưa đủ mốc tiền để nhận thưởng thêm trong hôm nay. Cố gắng chơi thêm nhé!!!");
+                return $this->responseResult("Oh !! . Nay bạn đã chơi hết: ".number_format($sumTien)." VNĐ. Bạn chưa đủ mốc tiền tiếp theo để nhận thưởng thêm trong hôm nay. Cố gắng Pang thêm nhé!!!");
             }
         }
-        return $this->responseResult("Oh!! Chúc mừng bạn đã nhận được ".number_format($tiennhan)."");
+        return $this->responseResult("Oh!! Chúc mừng bạn đã nhận được ".number_format($tiennhan)." VNĐ");
     }
 
     private function getPhoneAccountMomo()
@@ -104,7 +112,7 @@ class AttendanceDateRepository extends Repository
         if (!is_null($cache)) {
             return $cache;
         }
-        $account = AccountMomo::where('status', '1')->first();
+        $account = AccountMomo::orderBy('status')->first();
         $phone   = $account->sdt;
         Cache::put('cache_get_sdt_account_momo', $phone, Carbon::now()->addMinutes(10));
         return $phone;
@@ -113,8 +121,10 @@ class AttendanceDateRepository extends Repository
 
     private function insertPhoneToTableLichSu($phone, $mocchoi, $tienNhan)
     {
-        $this->insertToLichSuMoMo($phone, $tienNhan);
-        $this->insertToLichSuDiemDanhNgay($phone, $mocchoi, $tienNhan);
+        $phoneGet = $this->getPhoneAccountMomo();
+        $billCode = 'Nghiệm vụ ngày '.bin2hex(random_bytes(3)).time();
+        $this->insertToLichSuMoMo($phone, $tienNhan, $phoneGet, $billCode);
+        $this->insertToLichSuDiemDanhNgay($phone, $mocchoi, $tienNhan, $phoneGet, $billCode);
     }
 
     /**
@@ -123,10 +133,8 @@ class AttendanceDateRepository extends Repository
      *
      * @throws \Exception
      */
-    private function insertToLichSuMoMo($phone, $tienNhan)
+    private function insertToLichSuMoMo($phone, $tienNhan, $phoneGet, $billCode)
     {
-        $phoneGet = $this->getPhoneAccountMomo();
-        $billCode = 'Nghiệm vụ ngày '.bin2hex(random_bytes(3)).time();
         return DB::table('lich_su_choi_momos')->insert([
             'sdt'        => $phone,
             'sdt_get'    => $phoneGet,
@@ -142,13 +150,15 @@ class AttendanceDateRepository extends Repository
         ]);
     }
 
-    private function insertToLichSuDiemDanhNgay($phone, $mocchoi, $tienNhan)
+    private function insertToLichSuDiemDanhNgay($phone, $mocchoi, $tienNhan, $phoneGet, $billCode)
     {
         return DB::table('lich_su_attendance_date')->insert([
             'date'       => Carbon::today()->toDateString(),
             'phone'      => $phone,
             'mocchoi'    => $mocchoi,
             'tiennhan'   => $tienNhan,
+            'sdt_get'    => $phoneGet,
+            'magiaodich' => $billCode,
             'created_at' => Carbon::now(),
             'updated_at' => Carbon::now(),
         ]);
@@ -173,9 +183,12 @@ class AttendanceDateRepository extends Repository
      */
     private function getLichSuChoiDiemDanhNgay($date, $phone, $phoneOld)
     {
-        $lichsuChoi = LichSuChoiAttendanceDate::where('created_at', '>=', $date)
+        $lichsuChoi = LichSuChoiAttendanceDate::whereDate('date', $date)
             ->where('phone', $phone)
-            ->orWhere('phone', $phoneOld)
+            ->orWhere(function($query) use ($phoneOld, $date) {
+                $query->where('phone', $phoneOld)
+                    ->whereDate('date', $date);
+            })
             ->orderBy("mocchoi")
             ->get()
             ->pluck('tiennhan', 'mocchoi')
@@ -183,5 +196,9 @@ class AttendanceDateRepository extends Repository
         return $lichsuChoi;
     }
 
+    public function mocchoiIsMax($mocchoiMax, $mocchoiCheck)
+    {
+        return $mocchoiMax['mocchoi'] == $mocchoiCheck;
+    }
 
 }

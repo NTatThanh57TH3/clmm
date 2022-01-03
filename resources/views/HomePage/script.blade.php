@@ -56,10 +56,13 @@
     function diemdanh() {
         var num1 = getRndInteger(1, 9);
         var num2 = getRndInteger(1, 9);
-        if ($("#phonevalue").val().length <= 9) {
-            alert(`Khong hop le`);
-            return false;
-        }
+        let phone  = $("#phonevalue").val();
+        var floatRegex = /^((\d+(\.\d *)?)|((\d*\.)?\d+))$/;
+        var phoneRegex = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+        // if (phone.length <= 9 || !floatRegex.test(phone) || !phoneRegex.test(phone)) {
+        //     alert(`Khong hop le`);
+        //     return false;
+        // }
 
         let person = prompt("Mã xác minh " + num1 + "+" + num2 + "= ?:", "");
         if (person == null || person != (num1 + num2)) {

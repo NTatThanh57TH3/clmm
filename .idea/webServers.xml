@@ -9,7 +9,7 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
-      <webServer id="e4c39d8f-9082-4849-9b71-d32bdb7d2380" name="LIVE_CLMM" url="http://45.84.205.77">
+      <webServer id="e4c39d8f-9082-4849-9b71-d32bdb7d2380" name="AUTOMOMO" url="http://45.84.205.77">
         <fileTransfer host="45.84.205.77" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />

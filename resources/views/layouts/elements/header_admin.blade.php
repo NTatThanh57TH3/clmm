@@ -7,7 +7,40 @@
         color: #fff;
         height: 47px;
     }
+    .sidebar-menu li>a{
+        color: #b8c7ce !important;
+    }
+    .sidebar-menu>li.header{
+        color: #4b646f;
+        background: #1a2226;;
+    }
 
+    .main-sidebar a, .main-header a, .main-sidebar .info{
+        color: #fff;
+    }
+    .main-sidebar .form-control {
+        color: #666;
+        border-top-left-radius: 2px;
+        border-top-right-radius: 0;
+        border-bottom-right-radius: 0;
+        border-bottom-left-radius: 2px;
+        box-shadow: none;
+        background-color: #374850;
+        border: 1px solid transparent;
+        height: 35px;
+    }
+    .main-sidebar .btn {
+        color: #999;
+        border-top-left-radius: 0;
+        border-top-right-radius: 2px;
+        border-bottom-right-radius: 2px;
+        border-bottom-left-radius: 0;
+        box-shadow: none;
+        background-color: #374850;
+        border: 1px solid transparent;
+        height: 35px;
+    }
+    }
 </style>
 
 <header class="main-header">
@@ -65,7 +98,7 @@
     </nav>
 </header>
 <!-- Left side column. contains the logo and sidebar -->
-<aside class="main-sidebar">
+<aside class="main-sidebar" style="background-color: #222d32">
     <!-- sidebar: style can be found in sidebar.less -->
     <section class="sidebar">
         <!-- Sidebar user panel -->

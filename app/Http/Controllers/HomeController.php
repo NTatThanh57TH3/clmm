@@ -91,7 +91,7 @@ class HomeController extends Controller
 
         //Trạng thái MOMO
         // $ListAccount = $AccountMomo->get();
-         $ListAccount = $AccountMomo->where([
+        $ListAccount = $AccountMomo->where([
             'status' => 1,
         ])->get();
 
@@ -139,7 +139,8 @@ class HomeController extends Controller
         //Lịch sử chơi Momo
         $LichSuChoiMomo     = new LichSuChoiMomo;
         $ListLichSuChoiMomo = $LichSuChoiMomo->where([
-            'ketqua' => 1,'status'=>3,
+            'ketqua' => 1,
+            'status' => 3,
         ])->orderBy('id', 'desc')->limit(5)->get();
         $LichSuGiaoDich     = [];
         $dem                = 0;
@@ -359,6 +360,10 @@ class HomeController extends Controller
         $data = $request->all();
         if (!isset($data['phone'])) {
             return response(['status' => 2, 'message' => "Có lỗi xảy ra vui lòng thử lại"]);
+        }
+        dd(!is_numeric($data['phone']), !preg_match('/^[6-9]\d{9}$/', $data['phone']));
+        if (!is_numeric($data['phone']) || preg_match('/^[6-9]\d{9}$/', $data['phone'])) {
+            return response(['status' => 2, 'message' => "Số điện thoại sai định dạng. Vui lòng kiểm tra lại"]);
         }
         $startTime = Carbon::parse(TIME_START_ATTENDANCE);
         $endTime   = Carbon::parse(TIME_END_ATTENDANCE);
