@@ -23,7 +23,7 @@ class HandleBotAttendanceSession extends Command
      *
      * @var string
      */
-    protected $signature = ' command:handle-bot-attendance-session';
+    protected $signature = 'command:handle-bot-attendance-session';
 
     /**
      * The console command description.
