@@ -83,19 +83,24 @@
         })
     }
 
-    function diemDanhNgay() {
+    function diemDanhNgay(button) {
+
         let phone = $('#PhoneDiemDanhNgay').first().val();
         if (phone.trim() == "") {
             alert("Bạn chưa nhập số điện thoại")
             return false;
         }
+        $(button).attr('disabled', true);
+        $(button).css('cursor', "not-allowed");
         $.ajax({
             url: '{{ route('home.attendance_date') }}',
             data: {phone: phone},
             type: 'POST',
             success: function (data) {
                 alert(data.message)
-                $("#PhoneDiemDanhNgay").val(``)
+                $("#PhoneDiemDanhNgay").val(``);
+                $(button).removeAttr('disabled');
+                $(button).css('cursor', "auto");
             }
         })
     }

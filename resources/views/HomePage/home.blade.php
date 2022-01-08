@@ -535,7 +535,7 @@
                                                             điểm danh.</small>
                                                         <br>
                                                         <button class="btn btn-success" data-toggle="modal" data-target="#modalDiemDanh"
-                                                                onclick="diemDanhNgay()">Kiểm Tra
+                                                                onclick="diemDanhNgay(this)">Kiểm Tra
                                                         </button>
                                                     </div>
 
