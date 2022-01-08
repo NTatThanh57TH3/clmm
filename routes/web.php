@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AccountLevelMoneyController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\AdminController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\AdminController;
 */
 Route::group(['middleware' => 'maintenance_system'], function() {
     Route::get('/', [HomeController::class, 'index'])->name('home');
+    Route::post('/load-data', [HomeController::class, 'getDataAfterLoad'])
+        ->name('home.get_data_after_load');
     Route::post('/realtime-attendance', [HomeController::class, 'realTimeAttendance'])
         ->name('home.attendance.realtime');
     Route::post('/attendance-session', [HomeController::class, 'attendanceSession'])->name('home.attendance_session');
@@ -34,6 +37,9 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'],function(){
     Route::get('/lich-su-choi/{slug}', [AdminController::class, 'LichSuChoi'])->name('admin_lichsuchoi');
     Route::get('/setting', [AdminController::class, 'EditSetting'])->name('admin_setting');
     Route::post('/setting-action', [AdminController::class, 'EditSettingAction'])->name('admin_setting_action');
+    Route::get('/level-money-sdt', [AccountLevelMoneyController::class, 'index'])->name('admin_level_money');
+    Route::post('/level-money-sdt-add', [AccountLevelMoneyController::class, 'store'])->name('admin_level_money.store');
+    Route::post('/level-money-sdt-update', [AccountLevelMoneyController::class, 'update'])->name('admin_level_money.update');
     Route::get('/quanlysdt', [AdminController::class, 'QuanlySDT'])->name('admin_quanlysdt');
     Route::post('/quanlysdt/set-status', [AdminController::class, 'SetStatusSDT'])->name('admin.setstatus');
     Route::get('/quanlysdt/delete/id-{id}', [AdminController::class, 'DeteleSDT'])->name('admin_quanlysdt_delete');

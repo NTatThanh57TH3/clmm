@@ -1,7 +1,7 @@
 <?php
+
 /**
  *File name : constant.php / Date: 10/26/2021 - 9:51 PM
-
  */
 define("STATUS_ACTIVE", 1);
 define("STATUS_DE_ACTIVE", 0);
@@ -21,3 +21,21 @@ define("ATTENDANCE_WIN_RATE_DEFAULT", 4);
 
 define("STATUS_LSMOMO_CHUA_THANH_TOAN", 4);
 define("STATUS_LSMOMO_TAM_THOI", 3);
+
+define("CONFIG_CHAN_LE", 1);
+define("CONFIG_TAI_XIU", 2);
+define("CONFIG_CHAN_LE_TAI_XIU_2", 3);
+define("CONFIG_GAP_3", 4);
+define("CONFIG_TONG_3_SO", 5);
+define("CONFIG_1_PHAN_3", 6);
+
+return [
+    'list_game' => [
+        CONFIG_CHAN_LE           => "Chẵn lẻ",
+        CONFIG_TAI_XIU           => "Tài xỉu",
+        CONFIG_CHAN_LE_TAI_XIU_2 => "Chẵn lẻ tài xỉu 2",
+        CONFIG_GAP_3             => "Gấp 3",
+        CONFIG_TONG_3_SO         => "Tổng 3 số",
+        CONFIG_1_PHAN_3          => "1 phần 3",
+    ],
+];

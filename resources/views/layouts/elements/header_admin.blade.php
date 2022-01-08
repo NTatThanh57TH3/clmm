@@ -185,6 +185,7 @@
                 <ul class="treeview-menu">
                     <li><a href="{{ route('admin_setting') }}"><i class="fa fa-circle-o"></i> Cài đặt website</a></li>
                     <li><a href="{{ route('admin_quanlysdt') }}"><i class="fa fa-circle-o"></i> Quản lý số điện thoại</a></li>
+                    <li><a href="{{ route('admin_level_money') }}"><i class="fa fa-circle-o"></i> Quản lý hạn mức sđt</a></li>
                     <li><a href="{{ route('admin_setting_thuongtuan') }}"><i class="fa fa-circle-o"></i> Phần quà top tuần</a></li>
                     <li><a href="{{ route('admin_doi_mat_khau') }}"><i class="fa fa-circle-o"></i> Đổi mật khẩu</a></li>
                     <li><a href="{{ route('admin_config_message') }}"><i class="fa fa-circle-o"></i> Thiết lập trả thưởng</a></li>
