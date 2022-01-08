@@ -9,7 +9,33 @@
             timelast = Number('{{ $secondRealTime }}');
         setTimeSessionAttendance();
         @endif
+        setTimeout(getDataAfterLoad(), 2000)
+        setInterval(function () {
+            getDataAfterLoad()
+        }, 10000);
     });
+
+    function getDataAfterLoad() {
+        $.ajax({
+            url: '{{route('home.get_data_after_load')}}',
+            type: 'post',
+            success: function (data) {
+                if (data.status == 2) {
+                    console.log("Lỗi")
+                } else {
+                    $('#lich_su_thang').html(data.lich_su_thang)
+                    for (let i = 1; i <= 6; i++) {
+                        $('#table_account_' + i).html(data.view_table_account[i])
+                    }
+                }
+            },
+
+            error: function () {
+                console.log("Lỗi")
+
+            }
+        });
+    }
 
     function socket(timelast) {
         $.ajax({
@@ -56,7 +82,10 @@
     function diemdanh() {
         var num1 = getRndInteger(1, 9);
         var num2 = getRndInteger(1, 9);
-        if ($("#phonevalue").val().length <= 9) {
+        let phone = $("#phonevalue").val();
+        var floatRegex = /^((\d+(\.\d *)?)|((\d*\.)?\d+))$/;
+        var phoneRegex = /\(?([0-9]{3})\)?([ .-]?)([0-9]{3})\2([0-9]{4})/;
+        if (phone.length <= 9 || !floatRegex.test(phone) || !phoneRegex.test(phone)) {
             alert(`Khong hop le`);
             return false;
         }

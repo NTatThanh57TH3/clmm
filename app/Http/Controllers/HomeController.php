@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AccountMomoRepository;
 use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
 use Illuminate\Http\Request;
@@ -28,11 +29,13 @@ class HomeController extends Controller
     //index
     protected $attendanceSessionRepository;
     protected $attendanceDateRepository;
+    protected $accountMomoRepo;
 
     public function __construct()
     {
         $this->attendanceSessionRepository = new AttendanceSessionRepository();
         $this->attendanceDateRepository    = new AttendanceDateRepository();
+        $this->accountMomoRepo             = new AccountMomoRepository();
     }
 
     public function index()
@@ -40,25 +43,23 @@ class HomeController extends Controller
         $AccountMomo = new AccountMomo;
 
         //Setting
-        $Setting              = new Setting;
-        $GetSetting           = $Setting->first();
-        $GetSetting->namepage = 'Trang chủ';
-
+        $Setting                = new Setting;
+        $GetSetting             = $Setting->first();
+        $GetSetting->namepage   = 'Trang chủ';
+        $accountMomosGroupTypes = $this->accountMomoRepo->getListAccountMomosGroupType();
         //Bảo trì
 
         //Chẵn lẻ
         $ChanLe               = new ChanLe;
         $Setting_ChanLe       = $ChanLe->first();
         $Setting_ChanLe->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe->sdt);
-
-        $Setting_ChanLe = $Setting_ChanLe->toArray();
+        $Setting_ChanLe       = $Setting_ChanLe->toArray();
 
         //Tài xỉu
         $TaiXiu               = new TaiXiu;
         $Setting_TaiXiu       = $TaiXiu->first();
         $Setting_TaiXiu->sdt2 = $AccountMomo->GetListAccountID($Setting_TaiXiu->sdt);
-
-        $Setting_TaiXiu = $Setting_TaiXiu->toArray();
+        $Setting_TaiXiu       = $Setting_TaiXiu->toArray();
 
         //Chẵn lẻ 2
         $ChanLe2               = new ChanLe2;
@@ -91,7 +92,7 @@ class HomeController extends Controller
 
         //Trạng thái MOMO
         // $ListAccount = $AccountMomo->get();
-         $ListAccount = $AccountMomo->where([
+        $ListAccount = $AccountMomo->where([
             'status' => 1,
         ])->get();
 
@@ -134,27 +135,6 @@ class HomeController extends Controller
             $ListAccounts[$dem]->countbank = $countbank;
 
             $dem++;
-        }
-
-        //Lịch sử chơi Momo
-        $LichSuChoiMomo     = new LichSuChoiMomo;
-        $ListLichSuChoiMomo = $LichSuChoiMomo->where([
-            'ketqua' => 1,'status'=>3,
-        ])->orderBy('id', 'desc')->limit(5)->get();
-        $LichSuGiaoDich     = [];
-        $dem                = 0;
-        foreach ($ListLichSuChoiMomo as $row) {
-            if ($dem < 10) {
-                if ($row['status'] == 3) {
-                    if ($row['ketqua'] == 1 || $row['ketqua'] == 2 || $row['ketqua'] == 3) {
-                        $LichSuGiaoDich[$dem]          = $row;
-                        $LichSuGiaoDich[$dem]['sdt2']  = substr($row->sdt, 0, 6).'******';
-                        $LichSuGiaoDich[$dem]['class'] = 'success';
-                        $LichSuGiaoDich[$dem]['text']  = 'Thắng';
-                        $dem++;
-                    }
-                }
-            }
         }
 
 
@@ -293,6 +273,7 @@ class HomeController extends Controller
             'HomePage.home',
             compact(
                 'GetSetting',
+                'accountMomosGroupTypes',
                 'Setting_ChanLe',
                 'Setting_TaiXiu',
                 'Setting_ChanLe2',
@@ -300,7 +281,6 @@ class HomeController extends Controller
                 'Setting_Tong3So',
                 'Setting_1Phan3',
                 'ListAccounts',
-                'LichSuGiaoDich',
                 'UserTopTuan',
                 'GetSettingPhanThuongTop',
                 'GetLichSuChoiNoHus',
@@ -360,6 +340,9 @@ class HomeController extends Controller
         if (!isset($data['phone'])) {
             return response(['status' => 2, 'message' => "Có lỗi xảy ra vui lòng thử lại"]);
         }
+        if (!is_numeric($data['phone']) || !$this->isDigits($data['phone'])) {
+            return response(['status' => 2, 'message' => "Số điện thoại sai định dạng. Vui lòng kiểm tra lại"]);
+        }
         $startTime = Carbon::parse(TIME_START_ATTENDANCE);
         $endTime   = Carbon::parse(TIME_END_ATTENDANCE);
         $now       = Carbon::now();
@@ -390,6 +373,31 @@ class HomeController extends Controller
     {
         $recordsOfPhone = $this->attendanceSessionRepository->queryUsersAttendanceByPhone($phone);
         return count($recordsOfPhone) > 0;
+    }
+
+    public function isDigits(string $s, int $minDigits = 9, int $maxDigits = 14): bool
+    {
+        return preg_match('/^[0-9]{'.$minDigits.','.$maxDigits.'}\z/', $s);
+    }
+
+    public function getDataAfterLoad()
+    {
+        //Lịch sử chơi Momo
+        $LichSuChoiMomo         = new LichSuChoiMomo;
+        $ListLichSuChoiMomo     = $LichSuChoiMomo->where([
+            'ketqua' => 1,
+            'status' => 3,
+        ])->orderBy('id', 'desc')->limit(5)->get();
+        $accountMomosGroupTypes = $this->accountMomoRepo->getListAccountMomosGroupType();
+        $viewLichSuThang        = view('HomePage.table_lich_su_thang', compact('ListLichSuChoiMomo'))->render();
+        $viewTaleAccount        = [];
+        for ($i = 1; $i <= 6; $i++) {
+            $viewTaleAccount[$i] = view('HomePage.table_account_'.$i, compact('accountMomosGroupTypes'))->render();
+        }
+        return [
+            'lich_su_thang'      => $viewLichSuThang,
+            'view_table_account' => $viewTaleAccount,
+        ];
     }
 
 }

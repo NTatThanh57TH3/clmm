@@ -1,7 +1,7 @@
 <?php
 /**
  *File name : PhoneNumber.php / Date: 10/27/2021 - 11:26 PM
- *Code Owner: Thanhnt/ Email: Thanhnt@omt.com.vn/ Phone: 0384428234
+
  */
 
 namespace App\Traits;
