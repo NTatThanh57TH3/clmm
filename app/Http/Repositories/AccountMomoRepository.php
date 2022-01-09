@@ -61,7 +61,7 @@ class AccountMomoRepository
                     ->whereDate('created_at', Carbon::today())
                     ->where('ketqua', 1)
                     ->where('sdt_get', $phone)
-                    ->sum('tiencuoc'),
+                    ->sum('tiennhan'),
 
             ];
         }
