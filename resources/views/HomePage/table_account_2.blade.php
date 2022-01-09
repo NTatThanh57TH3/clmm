@@ -1,8 +1,12 @@
 @php
     $dem = 0;
+    $accountMomosGroupTypesTaiXiu = $accountMomosGroupTypesAllGames;
+    if (!is_null($accountMomosGroupTypes->get(CONFIG_TAI_XIU)) && count($accountMomosGroupTypes->get(CONFIG_TAI_XIU)) > 0){
+        $accountMomosGroupTypesTaiXiu = $accountMomosGroupTypes->get(CONFIG_TAI_XIU)->merge($accountMomosGroupTypesTaiXiu);
+    }
 @endphp
-@if(!is_null($accountMomosGroupTypes->get(CONFIG_TAI_XIU)) && count($accountMomosGroupTypes->get(CONFIG_TAI_XIU)) > 0)
-    @foreach($accountMomosGroupTypes->get(CONFIG_TAI_XIU) as $rowTaiXiu)
+@if(count($accountMomosGroupTypesTaiXiu) > 0)
+    @foreach($accountMomosGroupTypesTaiXiu->take(5) as $rowTaiXiu)
         <tr>
             <td id="p_27"><b id="ducnghia_27"
                              style="position: relative;">{{ $rowTaiXiu['sdt'] }} <span
@@ -17,8 +21,10 @@
                                                                 right: 0;
                                                                 text-align: center;
                                                                 font-size: 9px;">
-                        <font color="green">{{ number_format($rowTaiXiu['sumTienCuoc']) }}</font>/<font
-                                color="6861b1">30M</font>
+                        <font color="green">{{ number_format($rowTaiXiu['sumTienCuoc']) }}</font>/
+                        <font color="6861b1">30M</font>|
+                        <font color="green">{{ $rowTaiXiu['countbank'] }}</font>/
+                        <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>
             </td>

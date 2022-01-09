@@ -12,9 +12,9 @@
         <div class="col-sm-4">
             <div class="kt-form__group--inline">
                 <label>
-                    <select class="form-control sdt">
+                    <select class="form-control sdt{{ isset($account) ? "update"  : '' }}">
                         @foreach($accountsMomo as $accountMomo)
-                            <option value="{{$accountMomo['sdt']}}">{{$accountMomo['sdt']}}</option>
+                            <option {{ isset($account) && $account->sdt == $accountMomo['sdt'] ? "selected" : '' }} value="{{$accountMomo['sdt']}}">{{$accountMomo['sdt']}}</option>
                         @endforeach
                     </select>
                 </label>
@@ -28,9 +28,9 @@
         <div class="col-sm-4">
             <div class="kt-form__group--inline">
                 <label>
-                    <select class="form-control type">
+                    <select class="form-control type{{ isset($account) ? "update"  : '' }}">
                         @foreach($types as $type => $label)
-                            <option value="{{$type}}">{{$label}}</option>
+                            <option value="{{$type}}" {{ isset($account) && $account->type == $type ? "selected" : '' }}>{{$label}}</option>
                         @endforeach
                     </select>
                 </label>
@@ -46,7 +46,7 @@
         <div class="col-sm-4">
             <div class="kt-form__group--inline">
                 <label>
-                    <input class="form-control min" value="" placeholder="30000"/>
+                    <input class="form-control min{{ isset($account) ? "update"  : '' }}" value="{{ isset($account) ? $account->min  : '' }}" placeholder="30000"/>
                 </label>
             </div>
             <div class="d-md-none kt-margin-b-10"></div>
@@ -57,7 +57,7 @@
         <div class="col-sm-4">
             <div class="kt-form__group--inline">
                 <label>
-                    <input class="form-control max" value="" placeholder="3000000"/>
+                    <input class="form-control max{{ isset($account) ? "update"  : '' }}" value="{{ isset($account) ? $account->max  : '' }}" placeholder="3000000"/>
                 </label>
                 {{--                                <input class="form-control input-mocchoi-{{ $setting['id'] }}" value="{{ $setting['mocchoi'] }}"/>--}}
             </div>
@@ -65,3 +65,9 @@
         </div>
     </div>
 </div>
+@if(isset($account))
+    <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Đóng</button>
+        <button type="button" class="btn btn-primary" onclick="UpdateAccountLevel({{ $account->id }})">Cập nhật</button>
+    </div>
+@endif

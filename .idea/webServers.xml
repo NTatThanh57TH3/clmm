@@ -23,6 +23,13 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
+      <webServer id="c06b62eb-bb7e-48aa-9088-4473954ae669" name="BOSSMOMO" url="http://45.84.205.77">
+        <fileTransfer host="45.84.205.77" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
     </option>
   </component>
 </project>

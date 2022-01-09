@@ -39,7 +39,9 @@ Route::group(['prefix' => '/admin', 'middleware' => 'auth'],function(){
     Route::post('/setting-action', [AdminController::class, 'EditSettingAction'])->name('admin_setting_action');
     Route::get('/level-money-sdt', [AccountLevelMoneyController::class, 'index'])->name('admin_level_money');
     Route::post('/level-money-sdt-add', [AccountLevelMoneyController::class, 'store'])->name('admin_level_money.store');
+    Route::post('/level-money-sdt-edit', [AccountLevelMoneyController::class, 'edit'])->name('admin_level_money.edit');
     Route::post('/level-money-sdt-update', [AccountLevelMoneyController::class, 'update'])->name('admin_level_money.update');
+    Route::post('/level-money-sdt-delete', [AccountLevelMoneyController::class, 'delete'])->name('admin_level_money.delete');
     Route::get('/quanlysdt', [AdminController::class, 'QuanlySDT'])->name('admin_quanlysdt');
     Route::post('/quanlysdt/set-status', [AdminController::class, 'SetStatusSDT'])->name('admin.setstatus');
     Route::get('/quanlysdt/delete/id-{id}', [AdminController::class, 'DeteleSDT'])->name('admin_quanlysdt_delete');

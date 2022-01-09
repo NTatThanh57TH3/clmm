@@ -103,7 +103,7 @@ class AttendanceDateRepository extends Repository
                 return $this->responseResult("Oh !! . Nay bạn đã chơi hết: ".number_format($sumTien)." VNĐ. Bạn chưa đủ mốc tiền tiếp theo để nhận thưởng thêm trong hôm nay. Cố gắng Pang thêm nhé!!!");
             }
         }
-        return $this->responseResult("Oh!! Chúc mừng bạn đã nhận được ".number_format($tiennhan)." VNĐ");
+        return $this->responseResult("Oh!! Chúc mừng bạn đã nhận được ".number_format($tiennhan)." VNĐ ĐỚP ÍT THÔI!!");
     }
 
     private function getPhoneAccountMomo()

@@ -1,11 +1,15 @@
 @php
     $dem = 0;
+    $accountMomosGroupTypesTaiXiu2 = $accountMomosGroupTypesAllGames;
+    if (!is_null($accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2)) && count($accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2)) > 0){
+        $accountMomosGroupTypesTaiXiu2 = $accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2)->merge($accountMomosGroupTypesTaiXiu2);
+    }
 @endphp
-@if(!is_null($accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2)) && count($accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2)) > 0)
-    @foreach($accountMomosGroupTypes->get(CONFIG_CHAN_LE_TAI_XIU_2) as $rowChanLe2)
+@if(count($accountMomosGroupTypesTaiXiu2) > 0)
+    @foreach($accountMomosGroupTypesTaiXiu2->take(5) as $rowChanLe2)
         <tr>
             <td id="p_28"><b id="ducnghia_28"
-                             style="position: relative;">{{ $rowTaiXiu['sdt'] }} <span
+                             style="position: relative;">{{ $rowChanLe2['sdt'] }} <span
                             class="label label-success text-uppercase"
                             onclick="coppy('{{ $rowChanLe2['sdt'] }}')"><i
                                 class="fa fa-clipboard" aria-hidden="true"></i></span>
@@ -17,8 +21,10 @@
                                                                 right: 0;
                                                                 text-align: center;
                                                                 font-size: 9px;">
-                        <font color="green">{{ number_format($rowChanLe2['sumTienCuoc']) }}</font>/<font
-                                color="6861b1">30M</font>
+                        <font color="green">{{ number_format($rowChanLe2['sumTienCuoc']) }}</font>/
+                        <font color="6861b1">30M</font>|
+                        <font color="green">{{ $rowChanLe2['countbank'] }}</font>/
+                        <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>
             </td>

@@ -1,8 +1,12 @@
 @php
     $dem = 0;
+    $accountMomosGroupTypesChanLe = $accountMomosGroupTypesAllGames;
+    if (!is_null($accountMomosGroupTypes->get(CONFIG_CHAN_LE)) && count($accountMomosGroupTypes->get(CONFIG_CHAN_LE)) > 0){
+        $accountMomosGroupTypesChanLe = $accountMomosGroupTypes->get(CONFIG_CHAN_LE)->merge($accountMomosGroupTypesChanLe);
+    }
 @endphp
-@if(!is_null($accountMomosGroupTypes->get(CONFIG_CHAN_LE)) && count($accountMomosGroupTypes->get(CONFIG_CHAN_LE)) > 0)
-    @foreach($accountMomosGroupTypes->get(CONFIG_CHAN_LE) as $rowChanLe)
+@if(count($accountMomosGroupTypesChanLe) > 0)
+    @foreach($accountMomosGroupTypesChanLe->take(5) as $rowChanLe)
         <tr>
             <td id="p_27"><b id="ducnghia_27"
                              style="position: relative;">{{ $rowChanLe['sdt'] }} <span
@@ -17,8 +21,10 @@
                                                                 right: 0;
                                                                 text-align: center;
                                                                 font-size: 9px;">
-                        <font color="green">{{ number_format($rowChanLe['sumTienCuoc']) }}</font>/<font
-                                color="6861b1">30M</font>
+                        <font color="green">{{ number_format($rowChanLe['sumTienCuoc']) }}</font>/
+                        <font color="6861b1">30M</font>|
+                        <font color="green">{{ $rowChanLe['countbank'] }}</font>/
+                        <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>
             </td>

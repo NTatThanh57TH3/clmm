@@ -1,17 +1,17 @@
 @php
     $dem = 0;
-    $accountMomosGroupTypesGap3 = $accountMomosGroupTypesAllGames;
-    if (!is_null($accountMomosGroupTypes->get(CONFIG_GAP_3)) && count($accountMomosGroupTypes->get(CONFIG_GAP_3)) > 0){
-        $accountMomosGroupTypesGap3 = $accountMomosGroupTypes->get(CONFIG_GAP_3)->merge($accountMomosGroupTypesGap3);
+    $accountMomosGroupTypesLo = $accountMomosGroupTypesAllGames;
+    if (!is_null($accountMomosGroupTypes->get(CONFIG_GAME_LO)) && count($accountMomosGroupTypes->get(CONFIG_GAME_LO)) > 0){
+        $accountMomosGroupTypesLo = $accountMomosGroupTypes->get(CONFIG_GAME_LO)->merge($accountMomosGroupTypesLo);
     }
 @endphp
-@if(count($accountMomosGroupTypesGap3) > 0)
-    @foreach($accountMomosGroupTypesGap3->take(5) as $rowGap3)
+@if(count($accountMomosGroupTypesLo) > 0)
+    @foreach($accountMomosGroupTypesLo->take(5) as $rowLo)
         <tr>
             <td id="p_27"><b id="ducnghia_27"
-                             style="position: relative;">{{ $rowGap3['sdt'] }} <span
+                             style="position: relative;">{{ $rowLo['sdt'] }} <span
                             class="label label-success text-uppercase"
-                            onclick="coppy('{{ $rowGap3['sdt'] }}')"><i
+                            onclick="coppy('{{ $rowLo['sdt'] }}')"><i
                                 class="fa fa-clipboard" aria-hidden="true"></i></span>
                     <b style="position: absolute;
                                                                 top: 15px;
@@ -21,15 +21,15 @@
                                                                 right: 0;
                                                                 text-align: center;
                                                                 font-size: 9px;">
-                        <font color="green">{{ number_format($rowGap3['sumTienCuoc']) }}</font>/
+                        <font color="green">{{ number_format($rowLo['sumTienCuoc']) }}</font>/
                         <font color="6861b1">30M</font>|
-                        <font color="green">{{ $rowGap3['countbank'] }}</font>/
+                        <font color="green">{{ $rowLo['countbank'] }}</font>/
                         <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>
             </td>
-            <td>{{ number_format($rowGap3['min']) }} VNĐ</td>
-            <td>{{ number_format($rowGap3['max']) }} VNĐ</td>
+            <td>{{ number_format($rowLo['min']) }} VNĐ</td>
+            <td> {{ number_format($rowLo['max']) }} VNĐ</td>
 
         </tr>
         @php

@@ -54,16 +54,83 @@
             data.type = form.find('.type').first().val();
             data.min = form.find('.min').first().val();
             data.max = form.find('.max').first().val();
-            console.log(data)
             $.ajax({
                 url: '{{route('admin_level_money.store')}}',
                 type: "POST",
                 data: data,
                 success: function (data) {
                     if (data.status == 2) {
-                        swal("Vui lòng thử lại", 'errors');
+                        swal(data.message, 'errors');
                     } else {
                         location.reload();
+                    }
+                },
+
+                error: function () {
+                    swal("Vui lòng thử lại", 'errors');
+                }
+            });
+        }
+
+        function showEdit(id) {
+            $.ajax({
+                url: '{{route('admin_level_money.edit')}}',
+                type: "POST",
+                data: {'id': id},
+                success: function (data) {
+                    if (data.status == 2) {
+                        swal(data.message, 'errors');
+                    } else {
+                        $('.form_update').html(data);
+                    }
+                },
+
+                error: function () {
+                    swal("Vui lòng thử lại", 'errors');
+                }
+            });
+        }
+
+        function UpdateAccountLevel(id) {
+            let form = $('.form_update');
+            let data = {};
+            data.id = id;
+            data.sdt = form.find('.sdtupdate').first().val();
+            data.type = form.find('.typeupdate').first().val();
+            data.min = form.find('.minupdate').first().val();
+            data.max = form.find('.maxupdate').first().val();
+            $.ajax({
+                url: '{{route('admin_level_money.update')}}',
+                type: "POST",
+                data: data,
+                success: function (data) {
+                    if (data.status == 2) {
+                        swal(data.message, 'errors');
+                    } else {
+                        swal("Cập nhật dữ liệu thành công", 'success');
+                        $('.row_' + id).replaceWith(data);
+                        mark_offset($('.mark-offset'));
+                        $("#modalUpdate .close").click()
+                    }
+                },
+
+                error: function () {
+                    swal("Vui lòng thử lại", 'errors');
+                }
+            });
+        }
+        function deleteAccount(id) {
+            $.ajax({
+                url: '{{route('admin_level_money.delete')}}',
+                type: "POST",
+                data: {id: id},
+                success: function (data) {
+                    if (data.status == 2) {
+                        swal(data.message, 'errors');
+                    } else {
+                        swal("Cập nhật dữ liệu thành công", 'success');
+                        $('.row_' + id).remove();
+                        mark_offset($('.mark-offset'));
                     }
                 },
 
@@ -87,6 +154,12 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalUpdate" tabindex="-1" aria-labelledby="modalUpdateLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content form_update">
+            </div>
+        </div>
+    </div>
     <div class="box">
         <div class="box-header">
             <div style="float: left;">
@@ -106,9 +179,11 @@
             <div class="table-responsive">
                 <table id="my-table" class="table table-bordered table-hover">
                     <thead>
+
                     <tr>
                         <th>ID</th>
                         <th>SĐT</th>
+                        <th>Trò chơi</th>
                         <th>Min</th>
                         <th>Max</th>
                         <th>CHỨC NĂNG</th>
@@ -117,25 +192,7 @@
                     <tbody>
 
                     @foreach($accounts as $account)
-                        <tr>
-                            <td class="mark-offset"></td>
-                            <td>{{ $account['sdt'] }}</td>
-                            <td>{{ number_format($account['min']) }}</td>
-                            <td>{{ number_format($account['max']) }}</td>
-                            <td>
-                                <a href="{{ route('admin_quanlysdt_delete', $account['id']) }}">
-                                    <button class="btn btn-danger btn-sm">
-                                        Xóa
-                                    </button>
-                                </a>
-
-                                <a href="{{ route('admin_quanlysdt_edit', $account['id']) }}">
-                                    <button class="btn btn-success btn-sm">
-                                        Chỉnh sửa
-                                    </button>
-                                </a>
-                            </td>
-                        </tr>
+                        @include('AdminPage.AccountLevelMoney.row')
                     @endforeach
                     </tbody>
                 </table>

@@ -10,9 +10,18 @@
         setTimeSessionAttendance();
         @endif
         setTimeout(getDataAfterLoad(), 2000)
+
+        let timeRefreshTable = Number({{TIME_REFRESH_LOAD_DATA_AFTER}});
         setInterval(function () {
-            getDataAfterLoad()
-        }, 10000);
+            if (timeRefreshTable > 0) {
+                timeRefreshTable--;
+            } else {
+                getDataAfterLoad()
+                timeRefreshTable = {{TIME_REFRESH_LOAD_DATA_AFTER}};
+            }
+            $(".coundown-time").html(timeRefreshTable);
+        }, 1000);
+
     });
 
     function getDataAfterLoad() {
@@ -24,7 +33,9 @@
                     console.log("Lỗi")
                 } else {
                     $('#lich_su_thang').html(data.lich_su_thang)
-                    for (let i = 1; i <= 6; i++) {
+                    $('#table_trang_thai_momo').html(data.view_table_trang_thai_momo)
+                    var countViews = Number({{ count(Config::get('constant.list_game')) }});
+                    for (let i = 1; i <= countViews; i++) {
                         $('#table_account_' + i).html(data.view_table_account[i])
                     }
                 }

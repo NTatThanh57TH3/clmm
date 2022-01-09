@@ -4,10 +4,13 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Config;
 
 class AccountLevelMoney extends Model
 {
+
     use HasFactory;
+
     protected $table = "account_level_money";
     protected $fillable = [
         'sdt',
@@ -15,4 +18,11 @@ class AccountLevelMoney extends Model
         'min',
         'max',
     ];
+
+    public function getGameAttribute()
+    {
+        $games = Config::get('constant.list_game');
+        return $games[$this->type] ?? '';
+    }
+
 }

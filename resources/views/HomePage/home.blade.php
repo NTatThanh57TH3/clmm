@@ -1,3 +1,9 @@
+@php
+    $accountMomosGroupTypesAllGames = collect();
+    if (!is_null($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) && count($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) > 0){
+        $accountMomosGroupTypesAllGames = $accountMomosGroupTypes->get(CONFIG_ALL_GAME);
+    }
+@endphp
 @extends('layouts.app')
 
 @section('style')
@@ -404,6 +410,11 @@
                                     1 phần 3
                                 </button>
                             @endif
+                            @if($GetSetting->on_gap3 == 1)
+                                <button class="btn btn-default" server-action="change" server-id="20" server-rate="1">
+                                      Lô  🏳️
+                                </button>
+                            @endif
                         </div>
                     </div>
                     <div class="text-center mt-5">
@@ -472,6 +483,7 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     - Nội dung chuyển : <b>T</b> hoặc <b>X</b> (nếu đuôi mã giao dịch có các số sau) <br>
                                     <div class="table-responsive">
@@ -617,12 +629,14 @@
 
                                             </tr>
                                             </thead>
-                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_accounnt_{{ CONFIG_CHAN_LE }}"
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all"
+                                                   id="table_account_{{ CONFIG_CHAN_LE }}"
                                                    class="">
                                             @include('HomePage.table_account_'.CONFIG_CHAN_LE)
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     - Nội dung chuyển : <b>C</b> hoặc <b>L</b> (nếu đuôi mã giao dịch có các số sau) <br>
                                     <div class="table-responsive">
@@ -673,12 +687,14 @@
 
                                             </tr>
                                             </thead>
-                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}"
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all"
+                                                   id="table_account_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}"
                                                    class="">
                                             @include('HomePage.table_account_'.CONFIG_CHAN_LE_TAI_XIU_2)
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     - Nội dung chuyển : <b>C2</b> hoặc <b>L2</b> (nếu đuôi mã giao dịch có các số sau) <br>
 
@@ -781,6 +797,7 @@
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     với nội dung : <code>G3</code>.
                                     <br>
@@ -827,6 +844,62 @@
 
                                 </div>
 
+                                <div class="panel-body turn" turn-tab="20" style="padding-top: 0px;">
+                                    - <b>Lô</b> là một game tính kết quả bằng <b>2 số cuối mã giao dịch</b>. <br>
+                                    - Chuyển tiền vào một trong các tài khoản :
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover text-center">
+                                            <thead>
+                                            <tr role="row" class="bg-primary2">
+                                                <th class="text-center text-white">Số điện thoại</th>
+                                                <th class="text-center text-white">Cược tối thiểu</th>
+                                                <th class="text-center text-white">Cược tối đa</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{ CONFIG_GAME_LO }}"
+                                                   class="">
+                                            @include('HomePage.table_account_'.CONFIG_GAME_LO)
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
+                                    <br>
+                                    với nội dung : <code>F</code>.
+                                    <br>
+
+
+                                    <div class="table-responsive">
+                                        <table class="table table-striped table-bordered table-hover text-center">
+                                            <thead>
+                                            <tr role="row" class="bg-primary2">
+                                                <th class="text-center text-white">Nội Dung</th>
+                                                <th class="text-center text-white">Số</th>
+                                                <th class="text-center text-white">Tiền nhận</th>
+
+                                            </tr>
+                                            </thead>
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="result-table"
+                                                   class="">
+
+                                            <tr>
+                                                <td>F</td>
+                                                <td><code>00</code> <code>04</code> <code>10</code> <code>15</code><br>
+                                                    <code>18</code> <code>22</code> <code>24</code> <code>27</code><br>
+                                                    <code>33</code> <code>35</code> <code>38</code> <code>40</code><br>
+                                                    <code>42</code> <code>47</code> <code>54</code> <code>56</code><br>
+                                                    <code>61</code> <code>65</code> <code>69</code> <code>72</code><br>
+                                                    <code>77</code> <code>81</code> <code>84</code> <code>94</code><br>
+                                                    <code>99</code>
+                                                    </td>
+                                                <td><b>x3.5 tiền cược</b></td>
+                                            </tr>
+                                            </tbody>
+                                        </table>
+                                    </div>
+
+
+                                </div>
 
                                 <div class="panel-body turn" turn-tab="6" style="padding-top: 0px;">
                                     - <b>1 phần 3</b> là một game vô cùng dễ, tính kết quả bằng <b>1 số cuối mã giao dịch</b>.
@@ -843,12 +916,14 @@
 
                                             </tr>
                                             </thead>
-                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{ CONFIG_1_PHAN_3 }}"
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all"
+                                                   id="table_account_{{ CONFIG_1_PHAN_3 }}"
                                                    class="">
                                             @include('HomePage.table_account_'.CONFIG_1_PHAN_3)
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     với nội dung : .
                                     <br>
@@ -906,12 +981,14 @@
 
                                             </tr>
                                             </thead>
-                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_accounnt_{{ CONFIG_TONG_3_SO }}"
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all"
+                                                   id="table_account_{{ CONFIG_TONG_3_SO }}"
                                                    class="">
                                             @include('HomePage.table_account_'.CONFIG_TONG_3_SO)
                                             </tbody>
                                         </table>
                                     </div>
+                                    <div class="text-center font-weight-bold"><b>Làm mới sau <span class="text-danger coundown-time">{{ TIME_REFRESH_LOAD_DATA_AFTER }}</span> s</b></div>
                                     <br>
                                     với nội dung : <code>S</code>.
 
@@ -1029,20 +1106,20 @@
 
                         </div>
 
-{{--                        <center class="" style="width: 76%;--}}
-{{--            margin: auto;">--}}
-{{--                            <marquee><b>--}}
-{{--                                    @foreach($LichSuGiaoDich as $row)--}}
-{{--                                        Chúc mừng <font color="blue">{{ $row->sdt2 }}</font> thắng lớn nhận <font--}}
-{{--                                                color="green">{{ number_format($row->tiennhan) }}--}}
-{{--                                        </font> VNĐ. |--}}
-{{--                                    @endforeach--}}
-{{--                                    .</b></marquee>--}}
-{{--                        </center>--}}
+                        {{--                        <center class="" style="width: 76%;--}}
+                        {{--            margin: auto;">--}}
+                        {{--                            <marquee><b>--}}
+                        {{--                                    @foreach($LichSuGiaoDich as $row)--}}
+                        {{--                                        Chúc mừng <font color="blue">{{ $row->sdt2 }}</font> thắng lớn nhận <font--}}
+                        {{--                                                color="green">{{ number_format($row->tiennhan) }}--}}
+                        {{--                                        </font> VNĐ. |--}}
+                        {{--                                    @endforeach--}}
+                        {{--                                    .</b></marquee>--}}
+                        {{--                        </center>--}}
 
-{{--                        <div class="table-responsive" id="table_lich_su_thang">--}}
-{{--                            @include('HomePage.table_lich_su_thang')--}}
-{{--                        </div>--}}
+                        {{--                        <div class="table-responsive" id="table_lich_su_thang">--}}
+                        {{--                            @include('HomePage.table_lich_su_thang')--}}
+                        {{--                        </div>--}}
 
 
                     </div>
@@ -1064,30 +1141,14 @@
                                             <tr role="row" class="bg-primary2">
                                                 <th class="text-center text-white">Số điện thoại</th>
                                                 <th class="text-center text-white">Trạng thái</th>
-                                                <!--<th class="text-center text-white">Thời gian</th>-->
-                                                <!--<th class="text-center text-white">Giới hạn</th>-->
+{{--                                                <th class="text-center text-white">Thời gian</th>--}}
+                                                <th class="text-center text-white">Giới hạn</th>
                                                 <th class="text-center text-white">Số lần bank</th>
                                             </tr>
                                             </thead>
-                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="result-table"
+                                            <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_trang_thai_momo"
                                                    class="">
-
-
-                                            @foreach($ListAccounts as $row)
-                                                <tr>
-                                                    <td id="p_27"><b id="ducnghia_27">{{ $row->sdt }}</b> <span
-                                                                class="label label-{{ $row->status_class }} text-uppercase"
-                                                                onclick="coppy('{{ $row->sdt }}')"><i
-                                                                    class="fa fa-clipboard" aria-hidden="true"></i></span></td>
-                                                    <td>
-                                                        <span class="label label-{{ $row->status_class }} text-uppercase">{{ $row->status_text }}</span>
-                                                    </td>
-                                                <!--<td>{{ $row->created_at }}</td>-->
-                                                <!--<td> {{ number_format($row->limit1) }} / {{ number_format($row->limit2) }} VNĐ</td>-->
-                                                    <td>{{ number_format($row->countbank) }}/190</td>
-                                                </tr>
-                                            @endforeach
-
+{{--                                                @include('HomePage.table_trang_thai_momo')--}}
                                             </tbody>
                                         </table>
                                     </div>
