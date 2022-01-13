@@ -9,7 +9,7 @@
           </advancedOptions>
         </fileTransfer>
       </webServer>
-      <webServer id="e4c39d8f-9082-4849-9b71-d32bdb7d2380" name="LIVE_CLMM" url="http://45.84.205.77">
+      <webServer id="e4c39d8f-9082-4849-9b71-d32bdb7d2380" name="AUTOMOMO" url="http://45.84.205.77">
         <fileTransfer host="45.84.205.77" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
@@ -17,6 +17,13 @@
         </fileTransfer>
       </webServer>
       <webServer id="4d4fe9cc-6315-45f1-98d9-a82e159bad52" name="VIPMOMO" url="http://45.84.205.77">
+        <fileTransfer host="45.84.205.77" port="21">
+          <advancedOptions>
+            <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />
+          </advancedOptions>
+        </fileTransfer>
+      </webServer>
+      <webServer id="c06b62eb-bb7e-48aa-9088-4473954ae669" name="BOSSMOMO" url="http://45.84.205.77">
         <fileTransfer host="45.84.205.77" port="21">
           <advancedOptions>
             <advancedOptions dataProtectionLevel="Private" passiveMode="true" shareSSLContext="true" />

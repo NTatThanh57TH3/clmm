@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateAttendanceDateSettingTable extends Migration
+class CreateAccountLevelMoneyTable extends Migration
 {
 
     /**
@@ -14,11 +14,12 @@ class CreateAttendanceDateSettingTable extends Migration
      */
     public function up()
     {
-        Schema::create('attendance_date_setting', function(Blueprint $table) {
+        Schema::create('account_level_money', function(Blueprint $table) {
             $table->id();
-            $table->integer('mocchoi')->nullable();
-            $table->integer('tiadmin_quanlysdtennhan')->nullable();
-            $table->softDeletes();
+            $table->string('sdt');
+            $table->tinyInteger('type');
+            $table->integer('min');
+            $table->integer('max');
             $table->timestamps();
         });
     }
@@ -30,7 +31,7 @@ class CreateAttendanceDateSettingTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('attendance_date_setting');
+        Schema::dropIfExists('account_level_money');
     }
 
 }

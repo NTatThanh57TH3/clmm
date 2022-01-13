@@ -1,7 +1,7 @@
 <?php
 /**
  *File name : AttendanceSessionRepository.php / Date: 10/26/2021 - 9:39 PM
- *Code Owner: Thanhnt/ Email: Thanhnt@omt.com.vn/ Phone: 0384428234
+
  */
 
 namespace App\Http\Repositories;
@@ -15,6 +15,7 @@ use Illuminate\Config\Repository;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class AttendanceSessionRepository extends Repository
 {
@@ -79,7 +80,7 @@ class AttendanceSessionRepository extends Repository
     public function getDataAttendanceSession()
     {
         $cache = Cache::get('cache_data_attendance_session');
-        $cache = null;
+//        $cache = null;
         if (!is_null($cache)) {
             return $cache;
         }
@@ -192,6 +193,7 @@ class AttendanceSessionRepository extends Repository
             ->with(['usersAttendanceSession'])
             ->get();
         if (count($records) == 0) {
+            Log::info("Số phiên attendance đang hoat dong: ".count($records));
             return [
                 'current'          => AttendanceSession::create(['date' => Carbon::today()->toDateString()]),
                 'phone_win_latest' => "*",

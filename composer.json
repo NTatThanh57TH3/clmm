@@ -14,6 +14,7 @@
         "laravel/framework": "^8.40",
         "laravel/tinker": "^2.5",
         "laravel/ui": "^3.2",
+        "spatie/laravel-honeypot": "^3.0",
         "studio/laravel-totem": "^8.3"
     },
     "require-dev": {

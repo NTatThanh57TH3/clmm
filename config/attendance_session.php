@@ -2,7 +2,7 @@
 
 /**
  *File name : attendance_session.php / Date: 11/3/2021 - 9:32 PM
- *Code Owner: Thanhnt/ Email: Thanhnt@omt.com.vn/ Phone: 0384428234
+
  */
 return [
     'time_each'                => [60, 180, 300, 600, 900, 1200, 1800, 3600, 21600, 86400],

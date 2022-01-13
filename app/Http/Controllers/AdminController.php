@@ -334,7 +334,7 @@ class AdminController extends Controller
             $LichSuChoiMomo     = new LichSuChoiMomo;
             $GetLichSuChoiMomos = $LichSuChoiMomo->where([
                 'trochoi' => $trochoi,
-            ])->where('status', '!=', 5)->orderBy('id', 'DESC')->get();
+            ])->where('status', '!=', 5)->orderBy('id', 'DESC')->limit(300)->get();
         }
 
         $GetLichSuChoiMomo = [];
@@ -421,8 +421,8 @@ class AdminController extends Controller
 
         foreach ($GetAccountMomos as $row) {
             $GetAccountMomo[$dem]           = $row;
-            $GetAccountMomo[$dem]['amount'] = $WEB2M->getMoney_momo($row->token);
-            $GetAccountMomo[$dem]['name']   = $WEB2M->getName_momo($row->sdt, $row->token);
+            $GetAccountMomo[$dem]['amount'] = $WEB2M->getMoney_momo($row->token,$row->webapi);
+            $GetAccountMomo[$dem]['name']   = $WEB2M->getName_momo($row->sdt, $row->token,$row->webapi);
 
             //Lấy số lần bank
             $LichSuBank    = new LichSuBank;
@@ -1015,6 +1015,7 @@ class AdminController extends Controller
 
     public function DoiMatKhauAction(ChangePasswordAdminRequest $request)
     {
+        //return redirect()->back()->with('status', 'error')->with('message', 'Mật khẩu hiện tại không khớp');
         if (Hash::check($request->old_password, Auth::user()->password)) {
             $user            = new User;
             $userx           = $user->find(Auth::user()->id);
@@ -1033,6 +1034,7 @@ class AdminController extends Controller
         /**
          * Thông số
          */
+         return;
         $server = $this->server; //server
         $file   = 'source.zip'; //file source
         $sql    = 'sql.txt'; //file sql update
@@ -1149,7 +1151,7 @@ class AdminController extends Controller
         $GetSetting->namepage = 'Cập nhật';
 
         $LichSuBank    = new LichSuBank;
-        $getLichSuBank = $LichSuBank->orderBy('id', 'desc')->get();
+        $getLichSuBank = $LichSuBank->orderBy('id', 'desc')->limit(300)->get();
 
         return view('AdminPage.lichsubank', compact('GetSetting', 'getLichSuBank'));
     }

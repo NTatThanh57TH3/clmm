@@ -70,12 +70,14 @@
 <script src="{{ asset('/js/demo.js') }}"></script>
 <script src="{{ asset('/js/sweetalert.min.js') }}"></script>
 <script type="text/javascript">
-    $.ajaxSetup({
+    $(document).ready(function () {
+        $.ajaxSetup({
         headers: {
             'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content'),
             'Cache-Control': 'no-cache',
             'Pragma': 'no-cache'
         }
+    });
     });
 </script>
 @yield('script')

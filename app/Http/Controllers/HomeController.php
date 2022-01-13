@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Repositories\AccountMomoRepository;
 use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
 use Illuminate\Http\Request;
@@ -20,6 +21,7 @@ use Illuminate\Support\Carbon;
 use App\Models\NoHuu;
 use App\Models\LichSuChoiNoHu;
 use App\Models\LichSuBank;
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\Log;
 
 class HomeController extends Controller
@@ -28,11 +30,13 @@ class HomeController extends Controller
     //index
     protected $attendanceSessionRepository;
     protected $attendanceDateRepository;
+    protected $accountMomoRepo;
 
     public function __construct()
     {
         $this->attendanceSessionRepository = new AttendanceSessionRepository();
         $this->attendanceDateRepository    = new AttendanceDateRepository();
+        $this->accountMomoRepo             = new AccountMomoRepository();
     }
 
     public function index()
@@ -40,25 +44,23 @@ class HomeController extends Controller
         $AccountMomo = new AccountMomo;
 
         //Setting
-        $Setting              = new Setting;
-        $GetSetting           = $Setting->first();
-        $GetSetting->namepage = 'Trang chủ';
-
+        $Setting                = new Setting;
+        $GetSetting             = $Setting->first();
+        $GetSetting->namepage   = 'Trang chủ';
+        $accountMomosGroupTypes = $this->accountMomoRepo->getListAccountMomosGroupType();
         //Bảo trì
 
         //Chẵn lẻ
         $ChanLe               = new ChanLe;
         $Setting_ChanLe       = $ChanLe->first();
         $Setting_ChanLe->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe->sdt);
-
-        $Setting_ChanLe = $Setting_ChanLe->toArray();
+        $Setting_ChanLe       = $Setting_ChanLe->toArray();
 
         //Tài xỉu
         $TaiXiu               = new TaiXiu;
         $Setting_TaiXiu       = $TaiXiu->first();
         $Setting_TaiXiu->sdt2 = $AccountMomo->GetListAccountID($Setting_TaiXiu->sdt);
-
-        $Setting_TaiXiu = $Setting_TaiXiu->toArray();
+        $Setting_TaiXiu       = $Setting_TaiXiu->toArray();
 
         //Chẵn lẻ 2
         $ChanLe2               = new ChanLe2;
@@ -88,75 +90,6 @@ class HomeController extends Controller
         $Setting_1Phan3->sdt2 = $AccountMomo->GetListAccountID($Setting_1Phan3->sdt);
 
         $Setting_1Phan3 = $Setting_1Phan3->toArray();
-
-        //Trạng thái MOMO
-        // $ListAccount = $AccountMomo->get();
-         $ListAccount = $AccountMomo->where([
-            'status' => 1,
-        ])->get();
-
-        $ListAccounts   = [];
-        $dem            = 0;
-        $LichSuChoiMomo = new LichSuChoiMomo;
-        $LichSumomoDate = $LichSuChoiMomo->whereDate('created_at', Carbon::today())->where('status', '!=', 5)->get();
-
-        foreach ($ListAccount as $row) {
-            $ListAccounts[$dem]               = $row;
-            $ListAccounts[$dem]->status_text  = $AccountMomo->TextStatus($row->status);
-            $ListAccounts[$dem]->status_class = $AccountMomo->ClassStatus($row->status);
-
-            $ListAccounts[$dem]->limit1 = 0;
-            $GetLichSuChoiMomo          = $LichSumomoDate->where(['sdt_get' => $row->sdt]);
-
-            foreach ($GetLichSuChoiMomo as $res) {
-                $ListAccounts[$dem]->limit1 = $ListAccounts[$dem]->limit1 + $res->tiennhan;
-            }
-
-            $ListAccounts[$dem]->limit2    = $row->gioihan;
-            $ListAccounts[$dem]->countbank = 0;
-
-            //Lấy số lần bank
-            $LichSuBank    = new LichSuBank;
-            $countbank     = 0;
-            $getLichSuBank = $LichSuBank->whereDate('created_at', Carbon::today())->where([
-                'sdtbank' => $row->sdt,
-            ])->get();
-
-            foreach ($getLichSuBank as $r) {
-                $j = json_decode($r->response, true);
-
-                if (isset($j['status']) && $j['status'] == 200) {
-                    $countbank++;
-                }
-            }
-
-            //echo $countbank; exit;
-            $ListAccounts[$dem]->countbank = $countbank;
-
-            $dem++;
-        }
-
-        //Lịch sử chơi Momo
-        $LichSuChoiMomo     = new LichSuChoiMomo;
-        $ListLichSuChoiMomo = $LichSuChoiMomo->where([
-            'ketqua' => 1,'status'=>3,
-        ])->orderBy('id', 'desc')->limit(5)->get();
-        $LichSuGiaoDich     = [];
-        $dem                = 0;
-        foreach ($ListLichSuChoiMomo as $row) {
-            if ($dem < 10) {
-                if ($row['status'] == 3) {
-                    if ($row['ketqua'] == 1 || $row['ketqua'] == 2 || $row['ketqua'] == 3) {
-                        $LichSuGiaoDich[$dem]          = $row;
-                        $LichSuGiaoDich[$dem]['sdt2']  = substr($row->sdt, 0, 6).'******';
-                        $LichSuGiaoDich[$dem]['class'] = 'success';
-                        $LichSuGiaoDich[$dem]['text']  = 'Thắng';
-                        $dem++;
-                    }
-                }
-            }
-        }
-
 
         //Thuật toán tìm TOP tuần
         // $TopTuan = [];
@@ -293,14 +226,13 @@ class HomeController extends Controller
             'HomePage.home',
             compact(
                 'GetSetting',
+                'accountMomosGroupTypes',
                 'Setting_ChanLe',
                 'Setting_TaiXiu',
                 'Setting_ChanLe2',
                 'Setting_Gap3',
                 'Setting_Tong3So',
                 'Setting_1Phan3',
-                'ListAccounts',
-                'LichSuGiaoDich',
                 'UserTopTuan',
                 'GetSettingPhanThuongTop',
                 'GetLichSuChoiNoHus',
@@ -360,6 +292,9 @@ class HomeController extends Controller
         if (!isset($data['phone'])) {
             return response(['status' => 2, 'message' => "Có lỗi xảy ra vui lòng thử lại"]);
         }
+        if (!is_numeric($data['phone']) || !$this->isDigits($data['phone'])) {
+            return response(['status' => 2, 'message' => "Số điện thoại sai định dạng. Vui lòng kiểm tra lại"]);
+        }
         $startTime = Carbon::parse(TIME_START_ATTENDANCE);
         $endTime   = Carbon::parse(TIME_END_ATTENDANCE);
         $now       = Carbon::now();
@@ -390,6 +325,68 @@ class HomeController extends Controller
     {
         $recordsOfPhone = $this->attendanceSessionRepository->queryUsersAttendanceByPhone($phone);
         return count($recordsOfPhone) > 0;
+    }
+
+    public function isDigits(string $s, int $minDigits = 9, int $maxDigits = 14): bool
+    {
+        return preg_match('/^[0-9]{'.$minDigits.','.$maxDigits.'}\z/', $s);
+    }
+
+    public function getDataAfterLoad()
+    {
+        //Lịch sử chơi Momo
+        $LichSuChoiMomo                 = new LichSuChoiMomo;
+        $LichSuChoiMomoToDay            = $LichSuChoiMomo->whereDate('created_at', Carbon::today())->where([
+            'ketqua' => 1,
+            'status' => 3,
+        ])->orderBy('id', 'desc')->get();
+        $accountMomosGroupTypes         = $this->accountMomoRepo->getListAccountMomosGroupType();
+        $accountMomosGroupTypesAllGames = collect();
+        if (!is_null($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) && count($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) > 0) {
+            $accountMomosGroupTypesAllGames = $accountMomosGroupTypes->get(CONFIG_ALL_GAME);
+        }
+        $ListLichSuChoiMomo = $LichSuChoiMomoToDay->take(5);
+
+        //Trạng thái MOMO
+        // $ListAccount = $AccountMomo->get();
+        $ListAccounts = $this->accountMomoRepo->getListAccountMomos();
+        $LichSuBank   = new LichSuBank;
+        $LichSuBanks  = $LichSuBank->whereDate('created_at', Carbon::today())->get();
+        $ListAccounts = collect($ListAccounts)->map(function($account) use ($LichSuChoiMomoToDay, $LichSuBanks) {
+            $GetLichSuChoiMomo  = $LichSuChoiMomoToDay->where('sdt_get', $account['sdt']);
+            $getLichSuBank      = $LichSuBanks->where('sdtbank', $account['sdt']);
+            $responseLichSuBank = $getLichSuBank->pluck('response')->toArray();
+            $countbank          = 0;
+            foreach ($responseLichSuBank as $response) {
+                $j = json_decode($response, true);
+                if (isset($j['status']) && $j['status'] == 200) {
+                    $countbank++;
+                }
+            }
+            $account['sent_money']   = $GetLichSuChoiMomo->sum('tiennhan');
+            $account['status_class'] = "success";
+            $account['status_text']  = "hoạt động";
+            $account['countbank']    = $countbank;
+            return $account;
+        });
+
+
+        $viewLichSuThang   = view('HomePage.table_lich_su_thang', compact('ListLichSuChoiMomo'))->render();
+        $viewTrangthaiMomo = view('HomePage.table_trang_thai_momo', compact('ListAccounts'))->render();
+        $viewTaleAccount   = [];
+        $types             = Config::get('constant.list_game');
+        foreach ($types as $type => $label) {
+            if (!view()->exists('HomePage.table_account_'.$type)) {
+                continue;
+            }
+            $viewTaleAccount[$type] = view('HomePage.table_account_'.$type,
+                compact('accountMomosGroupTypes', 'accountMomosGroupTypesAllGames'))->render();
+        }
+        return [
+            'lich_su_thang'              => $viewLichSuThang,
+            'view_table_account'         => $viewTaleAccount,
+            'view_table_trang_thai_momo' => $viewTrangthaiMomo,
+        ];
     }
 
 }
