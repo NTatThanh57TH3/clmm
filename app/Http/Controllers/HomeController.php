@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Repositories\AccountMomoRepository;
 use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
+use App\Traits\PhoneNumber;
 use Illuminate\Http\Request;
 use App\Models\Setting;
 use App\Models\ChanLe;
@@ -41,142 +42,21 @@ class HomeController extends Controller
 
     public function index()
     {
-        $AccountMomo = new AccountMomo;
-
         //Setting
-        $Setting                = new Setting;
-        $GetSetting             = $Setting->first();
-        $GetSetting->namepage   = 'Trang chủ';
-        $accountMomosGroupTypes = $this->accountMomoRepo->getListAccountMomosGroupType();
+        $Setting              = new Setting;
+        $GetSetting           = $Setting->first();
+        $GetSetting->namepage = 'Trang chủ';
+        //        $accountMomosGroupTypes = $this->accountMomoRepo->getListAccountMomosGroupType();
         //Bảo trì
-
         //Chẵn lẻ
-        $ChanLe               = new ChanLe;
-        $Setting_ChanLe       = $ChanLe->first();
-        $Setting_ChanLe->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe->sdt);
-        $Setting_ChanLe       = $Setting_ChanLe->toArray();
-
-        //Tài xỉu
-        $TaiXiu               = new TaiXiu;
-        $Setting_TaiXiu       = $TaiXiu->first();
-        $Setting_TaiXiu->sdt2 = $AccountMomo->GetListAccountID($Setting_TaiXiu->sdt);
-        $Setting_TaiXiu       = $Setting_TaiXiu->toArray();
-
-        //Chẵn lẻ 2
-        $ChanLe2               = new ChanLe2;
-        $Setting_ChanLe2       = $ChanLe2->first();
-        $Setting_ChanLe2->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe2->sdt);
-
-        $Setting_ChanLe2 = $Setting_ChanLe2->toArray();
-
-
-        //Gấp 3
-        $Gap3               = new Gap3;
-        $Setting_Gap3       = $Gap3->first();
-        $Setting_Gap3->sdt2 = $AccountMomo->GetListAccountID($Setting_Gap3->sdt);
-
-        $Setting_Gap3 = $Setting_Gap3->toArray();
-
-        //Tổng 3 Số
-        $Tong3So               = new Tong3So;
-        $Setting_Tong3So       = $Tong3So->first();
-        $Setting_Tong3So->sdt2 = $AccountMomo->GetListAccountID($Setting_Tong3So->sdt);
-
-        $Setting_Tong3So = $Setting_Tong3So->toArray();
-
-        //1 Phần 3
-        $X1Phan3              = new X1Phan3;
-        $Setting_1Phan3       = $X1Phan3->first();
-        $Setting_1Phan3->sdt2 = $AccountMomo->GetListAccountID($Setting_1Phan3->sdt);
-
-        $Setting_1Phan3 = $Setting_1Phan3->toArray();
-
-        //Thuật toán tìm TOP tuần
-        // $TopTuan = [];
-        // $dem     = 0;
-
-        // $ListSDT = [];
-        // $st      = 0;
-
-        // $now           = Carbon::now();
-        // $weekStartDate = $now->startOfWeek()->format('Y-m-d H:i');
-        // $weekEndDate   = $now->endOfWeek()->format('Y-m-d H:i');
-
-        // $ListLichSuChoiMomo = $LichSuChoiMomo->whereBetween('created_at',
-        //     [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
-
-        // foreach ($ListLichSuChoiMomo as $row) {
-        //     $sdt = $row->sdt;
-
-        //     $check = true;
-        //     foreach ($ListSDT as $res) {
-        //         if ($res == $sdt) {
-        //             $check = false;
-        //         }
-        //     }
-
-        //     if ($check) {
-        //         $ListSDT[$st] = $sdt;
-        //         $st++;
-        //     }
-        // }
-
-        // $ListUser = [];
-        // $dem      = 0;
-
-        // foreach ($ListSDT as $row) {
-        //     $Result = $LichSuChoiMomo->where([
-        //         'sdt'    => $row,
-        //         'status' => 3,
-        //     ])->whereBetween('created_at', [Carbon::now()->startOfWeek(), Carbon::now()->endOfWeek()])->get();
-
-        //     $ListUser[$dem]['sdt']      = $row;
-        //     $ListUser[$dem]['tiencuoc'] = 0;
-
-        //     foreach ($Result as $res) {
-        //         $ListUser[$dem]['tiencuoc'] = $ListUser[$dem]['tiencuoc'] + $res->tiencuoc;
-        //     }
-
-        //     $dem++;
-        // }
-
-        // $UserTop = [];
-        // $st      = 0;
-
-        // if ($dem > 1) {
-        //     // Đếm tổng số phần tử của mảng
-        //     $sophantu = count($ListUser);
-        //     // Lặp để sắp xếp
-        //     for ($i = 0; $i < $sophantu - 1; $i++) {
-        //         // Tìm vị trí phần tử lớn nhất
-        //         $max = $i;
-        //         for ($j = $i + 1; $j < $sophantu; $j++) {
-        //             if ($ListUser[$j]['tiencuoc'] > $ListUser[$max]['tiencuoc']) {
-        //                 $max = $j;
-        //             }
-        //         }
-        //         // Sau khi có vị trí lớn nhất thì hoán vị
-        //         // với vị trí thứ $i
-        //         $temp           = $ListUser[$i];
-        //         $ListUser[$i]   = $ListUser[$max];
-        //         $ListUser[$max] = $temp;
-        //     }
-
-        //     $UserTop = $ListUser;
-        // } else {
-        //     $UserTop = $ListUser;
-        // }
-
-        // $UserTopTuan = [];
-        // $dem         = 0;
-
-        // foreach ($UserTop as $row) {
-        //     if ($dem < 5) {
-        //         $UserTopTuan[$dem]         = $row;
-        //         $UserTopTuan[$dem]['sdt2'] = substr($row['sdt'], 0, 6).'******';
-        //         $dem++;
-        //     }
-        // }
+        [
+            $Setting_ChanLe,
+            $Setting_TaiXiu,
+            $Setting_ChanLe2,
+            $Setting_Gap3,
+            $Setting_Tong3So,
+            $Setting_1Phan3,
+        ] = $this->getSetingGame();
 
         $UserTopTuan = [];
         //Phần thưởng tuần
@@ -226,7 +106,7 @@ class HomeController extends Controller
             'HomePage.home',
             compact(
                 'GetSetting',
-                'accountMomosGroupTypes',
+                //                'accountMomosGroupTypes',
                 'Setting_ChanLe',
                 'Setting_TaiXiu',
                 'Setting_ChanLe2',
@@ -340,38 +220,26 @@ class HomeController extends Controller
             'ketqua' => 1,
             'status' => 3,
         ])->orderBy('id', 'desc')->get();
-        $accountMomosGroupTypes         = $this->accountMomoRepo->getListAccountMomosGroupType();
+        $accountMomosGroupTypes         = $this->accountMomoRepo->getListAccountMomosWithAccountLevel();
         $accountMomosGroupTypesAllGames = collect();
         if (!is_null($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) && count($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) > 0) {
             $accountMomosGroupTypesAllGames = $accountMomosGroupTypes->get(CONFIG_ALL_GAME);
         }
         $ListLichSuChoiMomo = $LichSuChoiMomoToDay->take(5);
+        $ListAccounts       = $this->getTrangthaiMomo();
 
-        //Trạng thái MOMO
-        // $ListAccount = $AccountMomo->get();
-        $ListAccounts = $this->accountMomoRepo->getListAccountMomos();
-        $LichSuBank   = new LichSuBank;
-        $LichSuBanks  = $LichSuBank->whereDate('created_at', Carbon::today())->get();
-        $ListAccounts = collect($ListAccounts)->map(function($account) use ($LichSuChoiMomoToDay, $LichSuBanks) {
-            $GetLichSuChoiMomo  = $LichSuChoiMomoToDay->where('sdt_get', $account['sdt']);
-            $getLichSuBank      = $LichSuBanks->where('sdtbank', $account['sdt']);
-            $responseLichSuBank = $getLichSuBank->pluck('response')->toArray();
-            $countbank          = 0;
-            foreach ($responseLichSuBank as $response) {
-                $j = json_decode($response, true);
-                if (isset($j['status']) && $j['status'] == 200) {
-                    $countbank++;
-                }
-            }
-            $account['sent_money']   = $GetLichSuChoiMomo->sum('tiennhan');
-            $account['status_class'] = "success";
-            $account['status_text']  = "hoạt động";
-            $account['countbank']    = $countbank;
-            return $account;
-        });
+        $UserTopTuan = $this->getTopTuan($LichSuChoiMomo);
 
-
+        [
+            $Setting_ChanLe,
+            $Setting_TaiXiu,
+            $Setting_ChanLe2,
+            $Setting_Gap3,
+            $Setting_Tong3So,
+            $Setting_1Phan3,
+        ] = $this->getSetingGame();
         $viewLichSuThang   = view('HomePage.table_lich_su_thang', compact('ListLichSuChoiMomo'))->render();
+        $viewUserTopTuan   = view('HomePage.top_tuan', compact('UserTopTuan'))->render();
         $viewTrangthaiMomo = view('HomePage.table_trang_thai_momo', compact('ListAccounts'))->render();
         $viewTaleAccount   = [];
         $types             = Config::get('constant.list_game');
@@ -383,10 +251,160 @@ class HomeController extends Controller
                 compact('accountMomosGroupTypes', 'accountMomosGroupTypesAllGames'))->render();
         }
         return [
-            'lich_su_thang'              => $viewLichSuThang,
-            'view_table_account'         => $viewTaleAccount,
-            'view_table_trang_thai_momo' => $viewTrangthaiMomo,
+            'lich_su_thang'                      => $viewLichSuThang,
+            'view_table_account'                 => $viewTaleAccount,
+            'view_table_trang_thai_momo'         => $viewTrangthaiMomo,
+            'view_top_tuan'                      => $viewUserTopTuan,
+            'tiencuoc_'.CONFIG_CHAN_LE           => $Setting_ChanLe['tile'],
+            'tiencuoc_'.CONFIG_TAI_XIU           => $Setting_TaiXiu['tile'],
+            'tiencuoc_'.CONFIG_CHAN_LE_TAI_XIU_2 => $Setting_ChanLe2['tile'],
+            'tiencuoc_'.CONFIG_1_PHAN_3          => $Setting_1Phan3['tile'],
+            'tiencuoc_'.CONFIG_GAP_3.'_1'        => $Setting_Gap3['tile1'],
+            'tiencuoc_'.CONFIG_GAP_3.'_2'        => $Setting_Gap3['tile2'],
+            'tiencuoc_'.CONFIG_GAP_3.'_3'        => $Setting_Gap3['tile3'],
+            'tiencuoc_'.CONFIG_TONG_3_SO.'_1'    => $Setting_Tong3So['tile1'],
+            'tiencuoc_'.CONFIG_TONG_3_SO.'_2'    => $Setting_Tong3So['tile2'],
+            'tiencuoc_'.CONFIG_TONG_3_SO.'_3'    => $Setting_Tong3So['tile3'],
         ];
+    }
+
+    public function getPhone($phone)
+    {
+        $middle_string = "";
+        $length        = strlen($phone);
+        if ($length < 3) {
+            return $length == 1 ? "*" : "*".substr($phone, -1);
+        } else {
+            $part_size        = floor($length / 3);
+            $middle_part_size = $length - ($part_size * 2);
+            for ($i = 0; $i < $middle_part_size; $i++) {
+                $middle_string .= "*";
+            }
+            return substr($phone, 0, $part_size).$middle_string.substr($phone, -$part_size);
+        }
+    }
+
+    /**
+     * @param  \App\Models\AccountMomo  $AccountMomo
+     *
+     * @return array
+     */
+    private function getSetingGame(): array
+    {
+        $AccountMomo = new AccountMomo;
+
+        $ChanLe               = new ChanLe;
+        $Setting_ChanLe       = $ChanLe->first();
+        $Setting_ChanLe->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe->sdt);
+        $Setting_ChanLe       = $Setting_ChanLe->toArray();
+
+        //Tài xỉu
+        $TaiXiu               = new TaiXiu;
+        $Setting_TaiXiu       = $TaiXiu->first();
+        $Setting_TaiXiu->sdt2 = $AccountMomo->GetListAccountID($Setting_TaiXiu->sdt);
+        $Setting_TaiXiu       = $Setting_TaiXiu->toArray();
+
+        //Chẵn lẻ 2
+        $ChanLe2               = new ChanLe2;
+        $Setting_ChanLe2       = $ChanLe2->first();
+        $Setting_ChanLe2->sdt2 = $AccountMomo->GetListAccountID($Setting_ChanLe2->sdt);
+
+        $Setting_ChanLe2 = $Setting_ChanLe2->toArray();
+
+        //Gấp 3
+        $Gap3               = new Gap3;
+        $Setting_Gap3       = $Gap3->first();
+        $Setting_Gap3->sdt2 = $AccountMomo->GetListAccountID($Setting_Gap3->sdt);
+
+        $Setting_Gap3 = $Setting_Gap3->toArray();
+
+        //Tổng 3 Số
+        $Tong3So               = new Tong3So;
+        $Setting_Tong3So       = $Tong3So->first();
+        $Setting_Tong3So->sdt2 = $AccountMomo->GetListAccountID($Setting_Tong3So->sdt);
+
+        $Setting_Tong3So = $Setting_Tong3So->toArray();
+
+        //1 Phần 3
+        $X1Phan3              = new X1Phan3;
+        $Setting_1Phan3       = $X1Phan3->first();
+        $Setting_1Phan3->sdt2 = $AccountMomo->GetListAccountID($Setting_1Phan3->sdt);
+
+        $Setting_1Phan3 = $Setting_1Phan3->toArray();
+        return [
+            $Setting_ChanLe,
+            $Setting_TaiXiu,
+            $Setting_ChanLe2,
+            $Setting_Gap3,
+            $Setting_Tong3So,
+            $Setting_1Phan3,
+        ];
+    }
+
+    /**
+     * @param  \App\Models\LichSuChoiMomo  $LichSuChoiMomo
+     *
+     * @return mixed
+     */
+    private function getTopTuan(LichSuChoiMomo $LichSuChoiMomo)
+    {
+        $lichSuChoiMomoTuan = $LichSuChoiMomo->whereBetween('created_at',
+            [Carbon::today()->startOfWeek(), Carbon::today()->endOfWeek()])
+            //            ->where('ketqua', 1)
+            ->where('status', 3)
+            ->get();
+
+        $UserTopTuan = $lichSuChoiMomoTuan->map(function($lichSu) {
+            $phoneConvert = new PhoneNumber();
+            $lichSu->sdt  = $phoneConvert->convert($lichSu->sdt, true);
+            $lichSu->sdt  = $this->getPhone($lichSu->sdt);
+            return $lichSu;
+        })->groupBy('sdt')->map(function($lichSuPhone) {
+            return $lichSuPhone->sum('tiencuoc');
+        })->sortByDesc(function($tiencuoc) {
+            return $tiencuoc;
+        })->take(5)->toArray();
+        return $UserTopTuan;
+    }
+
+    /**
+     * @return \Illuminate\Support\Collection
+     */
+    private function getTrangthaiMomo(): \Illuminate\Support\Collection
+    {
+        //Trạng thái MOMO
+
+        $ListAccounts = $this->accountMomoRepo->getListAccountMomosWithAccountLevel(false);
+        return $ListAccounts->map(function($account) {
+            $account['status_class'] = "success";
+            $account['status_text']  = "hoạt động";
+            return $account;
+        });
+//        $LichSuBank   = new LichSuBank;
+//        $accounts     = collect($this->accountMomoRepo->getListAccountMomos());
+//        $LichSuBanks  = $LichSuBank->whereDate('created_at', Carbon::today())->get();
+//        $ListAccounts = collect($accounts)->map(function($account) use (
+//            $LichSuChoiMomoToDay,
+//            $LichSuBanks
+//        ) {
+//            $GetLichSuChoiMomo  = $LichSuChoiMomoToDay->where('sdt_get', $account['sdt']);
+//            $getLichSuBank      = $LichSuBanks->where('sdtbank', $account['sdt']);
+//            $responseLichSuBank = $getLichSuBank->pluck('response')->toArray();
+//            $countbank          = 0;
+//            foreach ($responseLichSuBank as $response) {
+//                $j = json_decode($response, true);
+//                if (isset($j['status']) && $j['status'] == 200) {
+//                    $countbank++;
+//                }
+//            }
+//            $account['sent_money']   = $GetLichSuChoiMomo->sum('tiennhan');
+//            $account['status_class'] = "success";
+//            $account['status_text']  = "hoạt động";
+//            $account['countbank']    = $countbank;
+//
+//            return $account;
+//        })->take(5);
+        return $ListAccounts;
     }
 
 }

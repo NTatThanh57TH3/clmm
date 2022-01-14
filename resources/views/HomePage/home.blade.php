@@ -1,9 +1,9 @@
-@php
-    $accountMomosGroupTypesAllGames = collect();
-    if (!is_null($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) && count($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) > 0){
-        $accountMomosGroupTypesAllGames = $accountMomosGroupTypes->get(CONFIG_ALL_GAME);
-    }
-@endphp
+{{--@php--}}
+{{--    $accountMomosGroupTypesAllGames = collect();--}}
+{{--    if (!is_null($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) && count($accountMomosGroupTypes->get(CONFIG_ALL_GAME)) > 0){--}}
+{{--        $accountMomosGroupTypesAllGames = $accountMomosGroupTypes->get(CONFIG_ALL_GAME);--}}
+{{--    }--}}
+{{--@endphp--}}
 @extends('layouts.app')
 
 @section('style')
@@ -479,7 +479,7 @@
                                             </thead>
                                             <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{CONFIG_TAI_XIU}}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_TAI_XIU)
+{{--                                            @include('HomePage.table_account_'.CONFIG_TAI_XIU)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -502,19 +502,19 @@
                                             <tr>
                                                 <td><b>X</b></td>
                                                 <td><code>1</code> - <code>2</code> - <code>3</code> - <code>4</code></td>
-                                                <td><b>x{{ $Setting_TaiXiu['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_TAI_XIU }}">{{ $Setting_TaiXiu['tile'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td><b>T</b></td>
                                                 <td><code>5</code> - <code>6</code> - <code>7</code> - <code>8</code></td>
-                                                <td><b>x{{ $Setting_TaiXiu['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_TAI_XIU }}">{{ $Setting_TaiXiu['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    - Tiền thắng sẽ = <b>Tiền cược*{{ $Setting_TaiXiu['tile'] }}</b> <br>
+                                    - Tiền thắng sẽ = <b>Tiền cược*<span class="setting_tiencuoc_{{ CONFIG_TAI_XIU }}">{{ $Setting_TaiXiu['tile'] }}</span></b> <br>
                                     - <b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ không
                                         được hoàn tiền.</b>
 
@@ -632,7 +632,7 @@
                                             <tbody role="alert" aria-live="polite" aria-relevant="all"
                                                    id="table_account_{{ CONFIG_CHAN_LE }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_CHAN_LE)
+{{--                                            @include('HomePage.table_account_'.CONFIG_CHAN_LE)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -655,19 +655,19 @@
                                             <tr>
                                                 <td><b>L</b></td>
                                                 <td><code>1</code> - <code>3</code> - <code>5</code> - <code>7</code></td>
-                                                <td><b>x{{ $Setting_ChanLe['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE }}">{{ $Setting_ChanLe['tile'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td><b>C</b></td>
                                                 <td><code>2</code> - <code>4</code> - <code>6</code> - <code>8</code></td>
-                                                <td><b>x{{ $Setting_ChanLe['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE }}">{{ $Setting_ChanLe['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    - Tiền thắng sẽ = <b>Tiền cược*{{ $Setting_ChanLe['tile'] }}</b> <br>
+                                    - Tiền thắng sẽ = <b>Tiền cược*<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE }}">{{ $Setting_ChanLe['tile'] }}</span></b> <br>
                                     <b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ không được
                                         hoàn tiền.</b>
 
@@ -690,7 +690,7 @@
                                             <tbody role="alert" aria-live="polite" aria-relevant="all"
                                                    id="table_account_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_CHAN_LE_TAI_XIU_2)
+{{--                                            @include('HomePage.table_account_'.CONFIG_CHAN_LE_TAI_XIU_2)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -715,32 +715,32 @@
                                                 <td><b>L2</b></td>
                                                 <td><code>1</code> - <code>3</code> - <code>5</code> - <code>7</code> -
                                                     <code>9</code></td>
-                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}">{{ $Setting_ChanLe2['tile'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td><b>C2</b></td>
                                                 <td><code>0</code> -<code>2</code> - <code>4</code> - <code>6</code> -
                                                     <code>8</code></td>
-                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}">{{ $Setting_ChanLe2['tile'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td><b>X2</b></td>
                                                 <td><code>0</code> -<code>1</code> - <code>2</code> - <code>3</code> -
                                                     <code>4</code></td>
-                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}">{{ $Setting_ChanLe2['tile'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td><b>T2</b></td>
                                                 <td><code>5</code> -<code>6</code> - <code>7</code> - <code>8</code> -
                                                     <code>9</code></td>
-                                                <td><b>x{{ $Setting_ChanLe2['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}">{{ $Setting_ChanLe2['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
                                             </tbody>
                                         </table>
                                     </div>
 
-                                    - Tiền thắng sẽ = <b>Tiền cược*{{ $Setting_ChanLe2['tile'] }}</b> <br>
+                                    - Tiền thắng sẽ = <b>Tiền cược*<span class="setting_tiencuoc_{{ CONFIG_CHAN_LE_TAI_XIU_2 }}">{{ $Setting_ChanLe2['tile'] }}</span></b> <br>
                                     - tiền cược tối đa chơi <b>Chẵn lẻ 2</b> là <b>{{ number_format($Setting_ChanLe2['max']) }}</b> VND
                                     <br>
                                     <b>Lưu ý : Mức cược mỗi số khác nhau, nếu chuyển sai hạn mức hoặc sai nội dung sẽ không được
@@ -793,7 +793,7 @@
                                             </thead>
                                             <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{ CONFIG_GAP_3 }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_GAP_3)
+{{--                                            @include('HomePage.table_account_'.CONFIG_GAP_3)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -823,18 +823,18 @@
                                                     <code>47</code> <code>49</code> <code>51</code> <code>54</code>
                                                     <code>57</code> <code>63</code> <code>64</code> <code>74</code>
                                                     <code>83</code> <code>91</code> <code>95</code> <code>96</code></td>
-                                                <td><b>x{{ $Setting_Gap3['tile1'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_GAP_3 }}_1">{{ $Setting_Gap3['tile1'] }}</span> tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td>2 số cuối mã GD</td>
                                                 <td><code>69</code> <code>66</code> <code>99</code></td>
-                                                <td><b>x{{ $Setting_Gap3['tile2'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_GAP_3 }}_2">{{ $Setting_Gap3['tile2'] }}</span> tiền cược tiền cược</b></td>
                                             </tr>
                                             <tr>
                                                 <td>3 số cuối mã GD</td>
                                                 <td><code>123</code> <code>234</code> <code>456</code> <code>678</code>
                                                     <code>789</code></td>
-                                                <td><b>x{{ $Setting_Gap3['tile3'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_GAP_3 }}_3">{{ $Setting_Gap3['tile3'] }}</span> tiền cược tiền cược</b></td>
                                             </tr>
 
                                             </tbody>
@@ -859,7 +859,7 @@
                                             </thead>
                                             <tbody role="alert" aria-live="polite" aria-relevant="all" id="table_account_{{ CONFIG_GAME_LO }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_GAME_LO)
+{{--                                            @include('HomePage.table_account_'.CONFIG_GAME_LO)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -919,7 +919,7 @@
                                             <tbody role="alert" aria-live="polite" aria-relevant="all"
                                                    id="table_account_{{ CONFIG_1_PHAN_3 }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_1_PHAN_3)
+{{--                                            @include('HomePage.table_account_'.CONFIG_1_PHAN_3)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -944,19 +944,19 @@
                                             <tr>
                                                 <td><b>N1</b></td>
                                                 <td><code>1</code> <code>2</code> <code>3</code></td>
-                                                <td><b>x{{ $Setting_1Phan3['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_1_PHAN_3 }}">{{ $Setting_1Phan3['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
                                             <tr>
                                                 <td><b>N2</b></td>
                                                 <td><code>4</code> <code>5</code> <code>6</code></td>
-                                                <td><b>x{{ $Setting_1Phan3['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_1_PHAN_3 }}">{{ $Setting_1Phan3['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
                                             <tr>
                                                 <td><b>N3</b></td>
                                                 <td><code>7</code> <code>8</code> <code>9</code></td>
-                                                <td><b>x{{ $Setting_1Phan3['tile'] }} tiền cược</b></td>
+                                                <td><b>x<span class="setting_tiencuoc_{{ CONFIG_1_PHAN_3 }}">{{ $Setting_1Phan3['tile'] }}</span> tiền cược</b></td>
                                             </tr>
 
 
@@ -984,7 +984,7 @@
                                             <tbody role="alert" aria-live="polite" aria-relevant="all"
                                                    id="table_account_{{ CONFIG_TONG_3_SO }}"
                                                    class="">
-                                            @include('HomePage.table_account_'.CONFIG_TONG_3_SO)
+{{--                                            @include('HomePage.table_account_'.CONFIG_TONG_3_SO)--}}
                                             </tbody>
                                         </table>
                                     </div>
@@ -995,12 +995,12 @@
                                     <br>
                                     - Kết quả là tính tổng 3 số cuối của mã giao dịch. <br>
 
-                                    - Nếu tổng 3 số cuối bằng <b>7</b>, <b>17</b>, <b>27</b> => Nhận <b>x{{ $Setting_Tong3So['tile1'] }}
+                                    - Nếu tổng 3 số cuối bằng <b>7</b>, <b>17</b>, <b>27</b> => Nhận <b>x<span class="setting_tiencuoc_{{ CONFIG_TONG_3_SO }}_1">{{ $Setting_Tong3So['tile1'] }}</span>
                                         tiền cược</b> <br>
-                                    - Nếu tổng 3 số cuối bằng <b>8</b>, <b>18</b> => Nhận <b>x{{ $Setting_Tong3So['tile2'] }} tiền cược</b>
+                                    - Nếu tổng 3 số cuối bằng <b>8</b>, <b>18</b> => Nhận <b>x<span class="setting_tiencuoc_{{ CONFIG_TONG_3_SO }}_2">{{ $Setting_Tong3So['tile2'] }}</span> tiền cược</b>
                                     <br>
 
-                                    - Nếu tổng 3 số cuối bằng <b>9</b>, <b>19</b> => Nhận <b>x{{ $Setting_Tong3So['tile3'] }} tiền cược</b>
+                                    - Nếu tổng 3 số cuối bằng <b>9</b>, <b>19</b> => Nhận <b>x<span class="setting_tiencuoc_{{ CONFIG_TONG_3_SO }}_3">{{ $Setting_Tong3So['tile3'] }}</span> tiền cược</b>
                                     <br>
                                     <br>
 
@@ -1177,33 +1177,7 @@
                                     </div>
                                 </div>
 
-
-                                <div class="panel-body">
-
-                                    @php
-                                        $dem = 0;
-                                    @endphp
-                                    @foreach($UserTopTuan as $row)
-                                        @php
-                                            $dem++;
-                                        @endphp
-                                        <div class="row">
-                                            <div class="col-xs-1">
-                                            <span class="fa-stack">
-                                                <span class="fa fa-circle fa-stack-2x text-danger"></span>
-                                                <strong class="fa-stack-1x text-white">{{ $dem }}</strong>
-                                            </span>
-                                            </div>
-
-                                            <div class="col-xs-2">
-                                                <span class="label label-success">{{ $row['sdt2'] }}</span>
-                                            </div>
-                                            <div class="col-xs-5 text-right">
-                                                <span class="label label-danger">{{ number_format($row['tiencuoc']) }} vnđ</span>
-                                            </div>
-                                        </div>
-                                    @endforeach
-
+                                <div class="panel-body" id="view_top_tuan">
 
                                 </div>
 

@@ -60,14 +60,14 @@
                 data: data,
                 success: function (data) {
                     if (data.status == 2) {
-                        swal(data.message, 'errors');
+                        swal(data.message, "", 'error');
                     } else {
                         location.reload();
                     }
                 },
 
                 error: function () {
-                    swal("Vui lòng thử lại", 'errors');
+                    swal("Vui lòng thử lại", "", 'errors');
                 }
             });
         }
@@ -105,9 +105,9 @@
                 data: data,
                 success: function (data) {
                     if (data.status == 2) {
-                        swal(data.message, 'errors');
+                        swal(data.message, "", 'error');
                     } else {
-                        swal("Cập nhật dữ liệu thành công", 'success');
+                        swal("Cập nhật dữ liệu thành công", "", 'success');
                         $('.row_' + id).replaceWith(data);
                         mark_offset($('.mark-offset'));
                         $("#modalUpdate .close").click()
@@ -119,6 +119,7 @@
                 }
             });
         }
+
         function deleteAccount(id) {
             $.ajax({
                 url: '{{route('admin_level_money.delete')}}',
@@ -186,6 +187,7 @@
                         <th>Trò chơi</th>
                         <th>Min</th>
                         <th>Max</th>
+                        <th>Trạng thái</th>
                         <th>CHỨC NĂNG</th>
                     </tr>
                     </thead>

@@ -9,7 +9,7 @@
                 <span class="label label-{{ $ListAccount['status_class'] }} text-uppercase">{{ $ListAccount['status_text'] }}</span>
             </td>
 {{--        <td>{{ \Carbon\Carbon::parse($ListAccount['created_at'])->format('d-m-Y H:o') }}</td>--}}
-        <td> {{ number_format($ListAccount['sent_money']) }} / {{ number_format($ListAccount['gioihan']) }} VNĐ</td>
+        <td> {{ number_format($ListAccount['sumTienCuoc']) }} / {{ number_format($ListAccount['gioihan']) }} VNĐ</td>
         <td>{{ number_format($ListAccount['countbank']) }}/{{ CONFIG_LIMIT_LAN_BANK }}</td>
         </tr>
     @endforeach

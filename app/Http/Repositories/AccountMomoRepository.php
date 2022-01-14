@@ -24,30 +24,44 @@ class AccountMomoRepository
         if (!is_null($cache)) {
             return $cache;
         }
-        $levelAccounts = AccountLevelMoney::where('status', STATUS_ACTIVE)->get()->map(function($account){
+        $listAccountMomos = $this->getListAccountMomos(true, [STATUS_ACTIVE, STATUS_MAINTENANCE]);
+        $levelAccounts    = AccountLevelMoney::where('status', STATUS_ACTIVE)->get()->map(function($account) use (
+            $listAccountMomos
+        ) {
+            $accountMomo   = collect($listAccountMomos)->where('sdt', $account->sdt)->first();
             $account->game = $account->getGameAttribute();
+            if (!is_null($accountMomo)) {
+                if ($accountMomo['status'] == STATUS_MAINTENANCE) {
+                    $account->text_status  = "Bảo trì";
+                    $account->class_status = "warning";
+                } else {
+                    $account->text_status  = "Hoạt động";
+                    $account->class_status = "success";
+                }
+            } else {
+                $account->notExist = "true";
+            }
             return $account;
+        })->filter(function($account) {
+            return !isset($account->notExist);
         })->toArray();
-        //        $phoneAccounts  = collect($accounts)->pluck('sdt')->toArray();
         Cache::put('cache_list_account_momos_active', $levelAccounts, Carbon::now()->addMinutes(60));
         return $levelAccounts;
     }
 
-    public function getListAccountMomos($forCreate = false)
+    public function getListAccountMomos($forCreate = false, $status = [STATUS_ACTIVE])
     {
         $phones = [];
         if (!$forCreate) {
             $accountListMomoLevel = $this->getListAccountMomosLevels();
             $phones               = collect($accountListMomoLevel)->pluck('sdt')->toArray();
         }
-        $query =  AccountMomo::where([
-            'status' => STATUS_ACTIVE,
-        ]);
-        $query = !empty($phones) ? $query->whereIn('sdt', $phones) : $query;
-        return $query->get()->unique('sdt')->take(5)->toArray();
+        $query = AccountMomo::whereIn('status', $status);
+        $query = !$forCreate ? $query->whereIn('sdt', $phones)->limit(5) : $query;
+        return $query->get()->unique('sdt')->toArray();
     }
 
-    public function getListAccountMomosGroupType()
+    public function getListAccountMomosWithAccountLevel($groupByType = true)
     {
         $accounts          = collect($this->getListAccountMomosLevels());
         $phones            = $accounts->pluck('sdt')->unique()->toArray();
@@ -65,23 +79,34 @@ class AccountMomoRepository
 
             ];
         }
-        return $accounts->map(function($account) use ($sumTienCuocPhones, $LichSuBanks) {
-            $sumTienCuocPhone     = collect($sumTienCuocPhones)->where('phone', $account['sdt'])->first();
+        $accountMomos      = AccountMomo::whereIn('sdt', $phones)
+            ->where('status', STATUS_ACTIVE)
+            ->get();
+        $phonesAccountMomo = $accountMomos->pluck('sdt')->toArray();
+        $accounts          = $accounts->map(function($account) use ($sumTienCuocPhones, $LichSuBanks, $accountMomos) {
+            $sumTienCuocPhone       = collect($sumTienCuocPhones)->where('phone', $account['sdt'])->first();
+            $accountMomo            = $accountMomos->where('sdt', $account['sdt'])->first();
             $account['sumTienCuoc'] = is_null($sumTienCuocPhone) ? 0 : $sumTienCuocPhone['sum'];
-            $getLichSuBank        = $LichSuBanks->where('sdtbank', $account['sdt']);
-            $countbank            = 0;
-            $responseLichSuBank   = $getLichSuBank->pluck('response')->toArray();
+            $account['gioihan']     = is_null($accountMomo) ? 0 : $accountMomo['gioihan'];
+            $getLichSuBank          = $LichSuBanks->where('sdtbank', $account['sdt']);
+            $countbank              = 0;
+            $responseLichSuBank     = $getLichSuBank->pluck('response')->toArray();
             foreach ($responseLichSuBank as $response) {
                 $j = json_decode($response, true);
                 if (isset($j['status']) && $j['status'] == 200) {
                     $countbank++;
                 }
             }
-            $account['countbank'] = $countbank;
+            $account['countbank']       = $countbank;
+            $account['color_tiencuoc']  = $account['sumTienCuoc'] > CONFIG_MAX_SUM_TIEN_CUOC ? "red" : "green";
+            $account['color_countbank'] = $countbank > CONFIG_MAX_COUNT_BANK ? "red" : "green";
             return $account;
-        })->groupBy('type')->map(function($accountList) {
-            return $accountList->unique('phone');
-        });
+        })->filter(function($account) use ($phonesAccountMomo) {
+            return in_array($account['sdt'], $phonesAccountMomo);
+        })->take(5)->sortBy('min');
+        return $groupByType ? $accounts->groupBy('type')->map(function($accountList) {
+            return $accountList->unique('sdt');
+        }) : $accounts;
     }
 
 }

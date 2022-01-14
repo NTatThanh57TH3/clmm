@@ -42,4 +42,13 @@ class Controller extends BaseController
         ];
     }
 
+    public function responseError($data = [], $message = "")
+    {
+        return [
+            'status'  => 2,
+            'message' => $message,
+            'data' => $data,
+        ];
+    }
+
 }

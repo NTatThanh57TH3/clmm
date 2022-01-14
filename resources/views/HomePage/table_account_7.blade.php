@@ -20,10 +20,10 @@
                                                                 left: 0;
                                                                 right: 0;
                                                                 text-align: center;
-                                                                font-size: 9px;">
-                        <font color="green">{{ number_format($rowLo['sumTienCuoc']) }}</font>/
+                                                                font-size: 7.5px;">
+                        <font color="{{ $rowLo['color_tiencuoc'] }}">{{ number_format($rowLo['sumTienCuoc']) }}</font>/
                         <font color="6861b1">30M</font>|
-                        <font color="green">{{ $rowLo['countbank'] }}</font>/
+                        <font color="{{ $rowLo['color_countbank'] }}">{{ $rowLo['countbank'] }}</font>/
                         <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>

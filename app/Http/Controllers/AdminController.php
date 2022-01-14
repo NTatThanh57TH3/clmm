@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Repositories\AttendanceDateRepository;
 use App\Http\Repositories\AttendanceSessionRepository;
+use App\Models\AccountLevelMoney;
 use App\Models\AttendanceDateSetting;
 use App\Models\AttendanceSetting;
 use Illuminate\Http\Request;
@@ -460,10 +461,15 @@ class AdminController extends Controller
     public function DeteleSDT($id)
     {
         $AccountMomo = new AccountMomo;
-        $AccountMomo->where([
+        $account = $AccountMomo->where([
             'id' => $id,
-        ])->delete();
-
+        ])->first();
+        if (is_null($account)){
+            return redirect()->back()->with('status', 'success')->with('message', 'Số điện thoại không tồn tại');
+        }
+        $phone = $account->sdt;
+        $account->delete();
+        AccountLevelMoney::where('sdt',$phone)->delete();
         return redirect()->back()->with('status', 'success')->with('message', 'Xóa dữ liệu thành công');
     }
 
@@ -507,7 +513,12 @@ class AdminController extends Controller
         $AccountMomo = new AccountMomo;
         $AccountMomo->fill($request->all());
         $AccountMomo->save();
-
+        AccountLevelMoney::create([
+            'sdt' => $request->all()['sdt'],
+            'type' => CONFIG_ALL_GAME,
+            'min' => 10000,
+            'max' => 500000,
+        ]);
         return redirect()->back()->with('status', 'success')->with('message', 'Thêm dữ liệu thành công');
     }
 

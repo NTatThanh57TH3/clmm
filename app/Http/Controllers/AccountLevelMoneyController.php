@@ -43,6 +43,12 @@ class AccountLevelMoneyController extends Controller
         if (!$this->validateParameterKeys($paramKeys, $data)) {
             return $this->responseMissingParameters();
         }
+        if (!is_numeric($data['min']) || !is_numeric($data['max']) || !is_numeric($data['sdt'])) {
+            return $this->responseError($data, "Dữ liệu gửi lên không hợp lệ");
+        }
+        if ((int)($data['min']) >= (int)$data['max']) {
+            return $this->responseError($data, "Giá trị min phải nhỏ hơn giá trị max");
+        }
         AccountLevelMoney::create($data);
         Cache::forget('cache_list_account_momos_active');
         Session::flash('message', 'Lưu dữ liệu thành công');
@@ -75,6 +81,12 @@ class AccountLevelMoneyController extends Controller
         $paramKeys = ['id', 'sdt', 'type', 'min', 'max'];
         if (!$this->validateParameterKeys($paramKeys, $data)) {
             return $this->responseMissingParameters();
+        }
+        if (!is_numeric($data['min']) || !is_numeric($data['max']) || !is_numeric($data['sdt'])) {
+            return $this->responseError($data, "Dữ liệu gửi lên không hợp lệ");
+        }
+        if ((int)($data['min']) >= (int)$data['max']) {
+            return $this->responseError($data, "Giá trị min phải nhỏ hơn giá trị max");
         }
         $account = AccountLevelMoney::where('id', $data['id'])->update($data);
         if (!$account) {

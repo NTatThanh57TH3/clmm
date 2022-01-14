@@ -34,10 +34,21 @@
                 } else {
                     $('#lich_su_thang').html(data.lich_su_thang)
                     $('#table_trang_thai_momo').html(data.view_table_trang_thai_momo)
+                    $('#view_top_tuan').html(data.view_top_tuan)
                     var countViews = Number({{ count(Config::get('constant.list_game')) }});
                     for (let i = 1; i <= countViews; i++) {
                         $('#table_account_' + i).html(data.view_table_account[i])
                     }
+                    $('.setting_tiencuoc_1').html(data.tiencuoc_1)
+                    $('.setting_tiencuoc_2').html(data.tiencuoc_2)
+                    $('.setting_tiencuoc_3').html(data.tiencuoc_3)
+                    $('.setting_tiencuoc_4_1').html(data.tiencuoc_4_1)
+                    $('.setting_tiencuoc_4_2').html(data.tiencuoc_4_2)
+                    $('.setting_tiencuoc_4_3').html(data.tiencuoc_4_3)
+                    $('.setting_tiencuoc_5_1').html(data.tiencuoc_5_1)
+                    $('.setting_tiencuoc_5_2').html(data.tiencuoc_5_2)
+                    $('.setting_tiencuoc_5_3').html(data.tiencuoc_5_3)
+                    $('.setting_tiencuoc_6').html(data.tiencuoc_6)
                 }
             },
 

@@ -25,4 +25,5 @@ class AccountLevelMoney extends Model
         return $games[$this->type] ?? '';
     }
 
+
 }

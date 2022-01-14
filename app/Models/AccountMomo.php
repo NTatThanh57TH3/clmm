@@ -14,13 +14,13 @@ class AccountMomo extends Model
         'password',
         'token',
         'status',
-        'gioihan'
+        'gioihan',
+        'webapi'
     ];
 
     protected $hidden = [
         'password',
         'token',
-        'status',
     ];
 
     public function TextStatus($status){
@@ -48,6 +48,12 @@ class AccountMomo extends Model
     }
 
     public function GetListAccountID($id){
+        $id='';
+		$AccountMomo = new AccountMomo;
+		 $ListAccount = $AccountMomo->get();
+		 foreach ($ListAccount as $row) {
+			 $id=$id .$row->id.',';
+		 }
         $list_id = explode(',', $id);
 
         $data = [];

@@ -5,6 +5,7 @@
  */
 define("STATUS_ACTIVE", 1);
 define("STATUS_DE_ACTIVE", 0);
+define("STATUS_MAINTENANCE", 2);
 
 define("TURN_ON_SETTING", 1);
 define("TURN_OFF_SETTING", 2);
@@ -34,6 +35,8 @@ define("CONFIG_TONG_3_SO", 5);
 define("CONFIG_1_PHAN_3", 6);
 define("CONFIG_GAME_LO", 7);
 
+define('CONFIG_MAX_SUM_TIEN_CUOC', 20000000);
+define('CONFIG_MAX_COUNT_BANK', 170);
 return [
     'list_game' => [
         CONFIG_ALL_GAME          => "Tất cả",

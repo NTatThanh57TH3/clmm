@@ -20,10 +20,10 @@
                                                                 left: 0;
                                                                 right: 0;
                                                                 text-align: center;
-                                                                font-size: 9px;">
-                        <font color="green">{{ number_format($rowChanLe2['sumTienCuoc']) }}</font>/
+                                                                font-size: 7.5px;">
+                        <font color="{{ $rowChanLe2['color_tiencuoc'] }}">{{ number_format($rowChanLe2['sumTienCuoc']) }}</font>/
                         <font color="6861b1">30M</font>|
-                        <font color="green">{{ $rowChanLe2['countbank'] }}</font>/
+                        <font color="{{ $rowChanLe2['color_countbank'] }}">{{ $rowChanLe2['countbank'] }}</font>/
                         <font color="6861b1">{{ CONFIG_LIMIT_LAN_BANK }}</font>
                     </b>
                 </b>
