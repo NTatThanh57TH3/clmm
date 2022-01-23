@@ -57,7 +57,7 @@ class AccountMomoRepository
             $phones               = collect($accountListMomoLevel)->pluck('sdt')->toArray();
         }
         $query = AccountMomo::whereIn('status', $status);
-        $query = !$forCreate ? $query->whereIn('sdt', $phones)->limit(5) : $query;
+        $query = !$forCreate ? $query->whereIn('sdt', $phones)->limit(4) : $query;
         return $query->get()->unique('sdt')->toArray();
     }
 
@@ -98,12 +98,14 @@ class AccountMomoRepository
                 }
             }
             $account['countbank']       = $countbank;
+            $account['color_min']       = $account['min'] > CONFIG_COMPARE_TIEN_CUOC_MIN ? "blue" : "";
+            $account['color_max']       = $account['max'] > CONFIG_COMPARE_TIEN_CUOC_MIN ? "blue" : "";
             $account['color_tiencuoc']  = $account['sumTienCuoc'] > CONFIG_MAX_SUM_TIEN_CUOC ? "red" : "green";
             $account['color_countbank'] = $countbank > CONFIG_MAX_COUNT_BANK ? "red" : "green";
             return $account;
         })->filter(function($account) use ($phonesAccountMomo) {
             return in_array($account['sdt'], $phonesAccountMomo);
-        })->take(5)->sortBy('min');
+        })->take(4)->sortBy('min');
         return $groupByType ? $accounts->groupBy('type')->map(function($accountList) {
             return $accountList->unique('sdt');
         }) : $accounts;

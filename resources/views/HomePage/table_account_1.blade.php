@@ -28,8 +28,8 @@
                     </b>
                 </b>
             </td>
-            <td>{{ number_format($rowChanLe['min']) }} VNĐ</td>
-            <td>{{ number_format($rowChanLe['max']) }} VNĐ</td>
+            <td style="font-weight: bold;color: {{$rowChanLe['color_min']}}">{{ number_format($rowChanLe['min']) }} VNĐ</td>
+            <td style="font-weight: bold;color: {{$rowChanLe['color_min']}}">{{ number_format($rowChanLe['max']) }} VNĐ</td>
 
             @php
                 $dem ++;
